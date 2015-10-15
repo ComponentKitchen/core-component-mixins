@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Polymer classes in ES6</title>
+<script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
+<script src="https://google.github.io/traceur-compiler/src/bootstrap.js"></script>
+
+<script type="module">
+import ElementBase from "ElementBase.js";
+
+/* Define a custom element. */
+class GreetElement extends ElementBase {
+};
+
+// GreetElement.register();
+
+// window.GreetElement = GreetElement;
+// let greet = new GreetElement();
+ElementBase.log("here?");
+</script>
+
+</head>
+
+<body>
+  <greet-element>world</greet-element>
+</body>
+
+</html>
