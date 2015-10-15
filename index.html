@@ -3,22 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<title>Polymer classes in ES6</title>
+<title>ElementBase test</title>
 <script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
 <script src="https://google.github.io/traceur-compiler/src/bootstrap.js"></script>
+
+<template id="greet-element">
+  Hello, <content></content>.
+</template>
 
 <script type="module">
 import ElementBase from "ElementBase.js";
 
 /* Define a custom element. */
 class GreetElement extends ElementBase {
+
+  get template() {
+    return document.querySelector('#greet-element');
+  }
+
 };
 
-// GreetElement.register();
-
-// window.GreetElement = GreetElement;
-// let greet = new GreetElement();
-ElementBase.log("here?");
+document.registerElement('greet-element', GreetElement);
 </script>
 
 </head>

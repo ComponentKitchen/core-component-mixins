@@ -35,10 +35,29 @@ class ElementBase extends HTMLElement {
   //   document.registerElement( this.prototype.is, this );
   // }
 
-  static log(text) {
-    console.log(text);
+  createdCallback() {
+    this.log("created");
+    let template = this.template;
+    if (template) {
+      if (typeof template === 'string') {
+        // Upgrade plain string to real template.
+        let text = template;
+        template = document.createElement('template');
+        template.content.innerHTML = text;
+      }
+      this.log("cloning template into shadow root");
+      this.root = this.createShadowRoot();
+      let clone = document.importNode(template.content, true);
+      this.root.appendChild(clone);
+    }
+  }
+
+  log(text) {
+    console.log(`${this.localName}: ${text}`);
   }
 
 }
+
+document.registerElement('element-base', ElementBase);
 
 export default ElementBase;
