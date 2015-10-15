@@ -1,4 +1,21 @@
 {
+  "name": "element-base",
+  "description": "Minimalist base class for custom elements",
+  "version": "0.0.0",
+  "repository": "https://github.com/JanMiksovsky/element-base",
+  "authors": [
+    "Jan Miksovsky <jan@component.kitchen>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "web-component-tester": "*"
+  },
   "jshintConfig": {
     "esnext": true
   }
