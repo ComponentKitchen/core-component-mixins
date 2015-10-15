@@ -7,12 +7,9 @@
     "Jan Miksovsky <jan@component.kitchen>"
   ],
   "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "test",
-    "tests"
-  ],
+  "devDependencies": {
+    "web-component-tester": "^3.3.26"
+  },
   "jshintConfig": {
     "esnext": true
   }
