@@ -7,40 +7,13 @@
 <script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
 <script src="https://google.github.io/traceur-compiler/src/bootstrap.js"></script>
 
+<script src="GreetElement.js" type="module"></script>
+
+<!--
 <template id="greet-element">
   Hello, <content></content><span id="punctuation">.</span>
 </template>
-
-<script type="module">
-import ElementBase from "ElementBase.js";
-
-/* Define a custom element. */
-class GreetElement extends ElementBase {
-
-  createdCallback() {
-    super.createdCallback();
-    this.log("GreetElement created");
-  }
-
-  get punctuation() {
-    return this.root.querySelector('#punctuation').textContent;
-  }
-  set punctuation(value) {
-    this.root.querySelector('#punctuation').textContent = value;
-  }
-
-  get template() {
-    return document.querySelector('#greet-element');
-    // return `
-    //   Hello,
-    //   <content></content>!
-    // `;
-  }
-
-};
-
-document.registerElement('greet-element', GreetElement);
-</script>
+-->
 
 </head>
 
