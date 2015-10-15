@@ -1,0 +1,21 @@
+<!-- An element that uses a real HTML template. -->
+
+<template id="greet-element">
+  Hello, <content></content>.
+</template>
+
+<script type="module">
+import ElementBase from "../src/ElementBase.js";
+
+/* Define a custom element. */
+class GreetElement extends ElementBase {
+
+  get template() {
+    // This just one way the template could be loaded; there are others.
+    return currentImport.querySelector('#greet-element');
+  }
+
+}
+
+document.registerElement('greet-element', GreetElement);
+</script>
