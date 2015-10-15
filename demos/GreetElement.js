@@ -3,11 +3,7 @@ import ElementBase from "../src/ElementBase.js";
 /* Define a custom element. */
 class GreetElement extends ElementBase {
 
-  createdCallback() {
-    super.createdCallback();
-    this.log("GreetElement created");
-  }
-
+  /* Define a "punctuation" attribute. */
   get punctuation() {
     return this.root.querySelector('#punctuation').textContent;
   }
