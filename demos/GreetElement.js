@@ -16,7 +16,6 @@ class GreetElement extends ElementBase {
   }
 
   get template() {
-    // return document.querySelector('#greet-element');
     return `
       Hello,
       <content></content><span id="punctuation">.</span>
