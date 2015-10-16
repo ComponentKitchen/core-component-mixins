@@ -1,6 +1,14 @@
 This prototype explores some ideas for [using ES6 classes to create web
 components](https://docs.google.com/document/d/1DPClTHykvT-AiGxA5XnUSYJFc2uwBHcJh_Rk55IR_5s/edit#heading=h.oc8n7a9071o3).
 
+# Features
+
+Currently, ElementBase supports limited versions of the following:
+
+1. Shadow DOM root creation.
+2. Template stamping.
+3. Marshalling attributes to properties.
+
 # Installing
 
 Ideally, only `npm install` should be required to install everything required
