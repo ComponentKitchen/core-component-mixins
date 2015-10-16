@@ -1,4 +1,4 @@
-import ElementBase from "../src/ElementBase.js";
+import ElementBase from "../dist/ElementBase";
 
 /* Element with a simple template */
 class ElementWithStringTemplate extends ElementBase {
@@ -11,4 +11,4 @@ class ElementWithStringTemplate extends ElementBase {
 
 document.registerElement('element-with-string-template', ElementWithStringTemplate);
 
-export { ElementWithStringTemplate };
+export default ElementWithStringTemplate;

@@ -8,29 +8,11 @@
   <script src="../bower_components/web-component-tester/browser.js"></script>
   <!-- <script src="../bower_components/webcomponentsjs/webcomponents.js"></script> -->
 
-  <!-- If we use Traceur for the tests, the suite never seems to get run. -->
-  <script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
-  <script src="https://google.github.io/traceur-compiler/src/bootstrap.js"></script>
-
 </head>
 
 <body>
   <div id="container"></div>
-  <!-- <script>
-  suite("ElementBase", function() {
-    // HACK: The presence of this test seems to force WCT to wait for Traceur to
-    // do its work before running the test suite. If this is removed, the test
-    // module won't run.
-    test("no-op", function() {
-    });
-  });
-  </script> -->
-  <script src="ElementBase.tests.js" type="module"></script>
-  <!-- <script type="module">
-    let script = document.createElement('script');
-    script.src = "../bower_components/web-component-tester/browser.js";
-    document.body.appendChild(script);
-  </script> -->
+  <script src="../build/tests.js"></script>
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-import "testElements.js";
+import ElementWithStringTemplate from "./testElements";
 
 suite("ElementBase", () => {
 
