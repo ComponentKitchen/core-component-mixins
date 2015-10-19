@@ -25,8 +25,21 @@ class ElementBase extends HTMLElement {
     marshallAttributesToProperties(this);
   }
 
+  /*
+   * Create a subclass with the given members on its prototype.
+   *
+   * This .extend() facility is provided solely as a means to create component
+   * classes in ES5. ES6 users should use "class ... extends ElementBase".
+   */
   static extend(properties) {
-    return class newClass extends ElementBase {};
+    class newClass extends ElementBase {}
+    let prototype = Object.getPrototypeOf(newClass);
+    Object.getOwnPropertyNames(properties).forEach((name) => {
+      let descriptor = Object.getOwnPropertyDescriptor(properties, name);
+      Object.defineProperty(prototype, name, descriptor);
+    });
+    newClass.prototype = prototype;
+    return newClass;
   }
 
   log(text) {

@@ -107,6 +107,13 @@ var ElementBase = (function (_HTMLElement) {
       }
       marshallAttributesToProperties(this);
     }
+
+    /*
+     * Create a subclass with the given members on its prototype.
+     *
+     * This .extend() facility is provided solely as a means to create component
+     * classes in ES5. ES6 users should use "class ... extends ElementBase".
+     */
   }, {
     key: "log",
     value: function log(text) {
@@ -115,7 +122,7 @@ var ElementBase = (function (_HTMLElement) {
   }], [{
     key: "extend",
     value: function extend(properties) {
-      return (function (_ElementBase) {
+      var newClass = (function (_ElementBase) {
         _inherits(newClass, _ElementBase);
 
         function newClass() {
@@ -126,6 +133,14 @@ var ElementBase = (function (_HTMLElement) {
 
         return newClass;
       })(ElementBase);
+
+      var prototype = Object.getPrototypeOf(newClass);
+      Object.getOwnPropertyNames(properties).forEach(function (name) {
+        var descriptor = Object.getOwnPropertyDescriptor(properties, name);
+        Object.defineProperty(prototype, name, descriptor);
+      });
+      newClass.prototype = prototype;
+      return newClass;
     }
   }]);
 

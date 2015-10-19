@@ -1,5 +1,4 @@
 events/listeners a la X-Tag
-.extend()
 mixins
 camel-case to camelCase
 override setAttribute to avoid recursively setting property
