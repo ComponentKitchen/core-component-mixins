@@ -154,33 +154,29 @@ module.exports = exports["default"];
 },{}],2:[function(require,module,exports){
 "use strict";
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
 
 var _testElements = require("./testElements");
 
-var _testElements2 = _interopRequireDefault(_testElements);
+var testElements = _interopRequireWildcard(_testElements);
 
 suite("ElementBase", function () {
 
-  test("component stamps template into root", function () {
+  test("component stamps string template into root", function () {
     var element = document.createElement('element-with-string-template');
     assert(element.root);
-    assert(element.root.textContent.trim(), "Hello");
+    assert.equal(element.root.textContent.trim(), "Hello");
   });
 
-  // test("template can be a string", function() {
-  //   var element = document.createElement('test-template-string');
-  //   assert(element.root);
-  //   assert(element.root.textContent.trim(), "Hello");
-  // });
+  test("component stamps real template into root", function () {
+    var element = document.createElement('element-with-real-template');
+    assert(element.root);
+    assert.equal(element.root.textContent.trim(), "Hello");
+  });
 });
 
 },{"./testElements":3}],3:[function(require,module,exports){
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -219,7 +215,29 @@ var ElementWithStringTemplate = (function (_ElementBase) {
 
 document.registerElement('element-with-string-template', ElementWithStringTemplate);
 
-exports["default"] = ElementWithStringTemplate;
-module.exports = exports["default"];
+/* Element with a real template */
+var template = document.createElement('template');
+template.content.textContent = "Hello";
+
+var ElementWithRealTemplate = (function (_ElementBase2) {
+  _inherits(ElementWithRealTemplate, _ElementBase2);
+
+  function ElementWithRealTemplate() {
+    _classCallCheck(this, ElementWithRealTemplate);
+
+    _get(Object.getPrototypeOf(ElementWithRealTemplate.prototype), "constructor", this).apply(this, arguments);
+  }
+
+  _createClass(ElementWithRealTemplate, [{
+    key: "template",
+    get: function get() {
+      return template;
+    }
+  }]);
+
+  return ElementWithRealTemplate;
+})(_distElementBase2["default"]);
+
+document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 },{"../dist/ElementBase":1}]},{},[2]);

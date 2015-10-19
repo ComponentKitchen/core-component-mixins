@@ -1,17 +1,17 @@
-import ElementWithStringTemplate from "./testElements";
+import * as testElements from "./testElements";
 
 suite("ElementBase", () => {
 
-  test("component stamps template into root", () => {
+  test("component stamps string template into root", () => {
     var element = document.createElement('element-with-string-template');
     assert(element.root);
-    assert(element.root.textContent.trim(), "Hello");
+    assert.equal(element.root.textContent.trim(), "Hello");
   });
 
-  // test("template can be a string", function() {
-  //   var element = document.createElement('test-template-string');
-  //   assert(element.root);
-  //   assert(element.root.textContent.trim(), "Hello");
-  // });
+  test("component stamps real template into root", function() {
+    var element = document.createElement('element-with-real-template');
+    assert(element.root);
+    assert.equal(element.root.textContent.trim(), "Hello");
+  });
 
 });

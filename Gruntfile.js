@@ -3,6 +3,7 @@ module.exports = function (grunt) {
   'use strict';
 
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Project configuration.
   grunt.initConfig({
@@ -21,10 +22,18 @@ module.exports = function (grunt) {
           'build/tests.js': 'test/ElementBase.tests.js'
         }
       }
+    },
+
+    watch: {
+      scripts: {
+        files: ['**/*.js'],
+        tasks: ['build']
+      }
     }
 
   });
 
   grunt.registerTask('default', ['build']);
   grunt.registerTask('build', ['browserify']);
+
 };

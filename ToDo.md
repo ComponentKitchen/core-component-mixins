@@ -1,5 +1,4 @@
 events/listeners a la X-Tag
-Babel, grunt
 .extend()
 mixins
 camel-case to camelCase
