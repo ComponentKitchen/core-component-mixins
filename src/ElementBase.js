@@ -25,9 +25,9 @@ class ElementBase extends HTMLElement {
     marshallAttributesToProperties(this);
   }
 
-  // static extend(properties) {
-  //   return {};
-  // }
+  static extend(properties) {
+    return class newClass extends ElementBase {};
+  }
 
   log(text) {
     console.log(`${this.localName}: ${text}`);

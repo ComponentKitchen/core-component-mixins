@@ -50,15 +50,25 @@ var ElementBase = (function (_HTMLElement) {
       }
       marshallAttributesToProperties(this);
     }
-
-    // static extend(properties) {
-    //   return {};
-    // }
-
   }, {
     key: "log",
     value: function log(text) {
       console.log(this.localName + ": " + text);
+    }
+  }], [{
+    key: "extend",
+    value: function extend(properties) {
+      return (function (_ElementBase) {
+        _inherits(newClass, _ElementBase);
+
+        function newClass() {
+          _classCallCheck(this, newClass);
+
+          _get(Object.getPrototypeOf(newClass.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        return newClass;
+      })(ElementBase);
     }
   }]);
 
@@ -220,12 +230,16 @@ var ElementWithRealTemplate = (function (_ElementBase2) {
 document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 /* Element created via ES5-compatible .extend(). */
-// let Es5ClassViaExtend = ElementBase.extend({
-//   get foo() {
-//     return "Hello";
-//   }
-// });
-// document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
+var Es5ClassViaExtend = _srcElementBase2["default"].extend(Object.defineProperties({}, {
+  foo: {
+    get: function get() {
+      return "Hello";
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
 
 exports.ElementWithStringTemplate = ElementWithStringTemplate;
 exports.ElementWithRealTemplate = ElementWithRealTemplate;

@@ -50,15 +50,25 @@ var ElementBase = (function (_HTMLElement) {
       }
       marshallAttributesToProperties(this);
     }
-
-    // static extend(properties) {
-    //   return {};
-    // }
-
   }, {
     key: "log",
     value: function log(text) {
       console.log(this.localName + ": " + text);
+    }
+  }], [{
+    key: "extend",
+    value: function extend(properties) {
+      return (function (_ElementBase) {
+        _inherits(newClass, _ElementBase);
+
+        function newClass() {
+          _classCallCheck(this, newClass);
+
+          _get(Object.getPrototypeOf(newClass.prototype), "constructor", this).apply(this, arguments);
+        }
+
+        return newClass;
+      })(ElementBase);
     }
   }]);
 

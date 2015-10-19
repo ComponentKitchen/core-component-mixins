@@ -22,11 +22,11 @@ document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 
 /* Element created via ES5-compatible .extend(). */
-// let Es5ClassViaExtend = ElementBase.extend({
-//   get foo() {
-//     return "Hello";
-//   }
-// });
-// document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
+let Es5ClassViaExtend = ElementBase.extend({
+  get foo() {
+    return "Hello";
+  }
+});
+document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
 
 export { ElementWithStringTemplate, ElementWithRealTemplate };
