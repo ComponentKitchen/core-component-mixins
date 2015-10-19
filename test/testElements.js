@@ -1,4 +1,4 @@
-import ElementBase from "../dist/ElementBase";
+import ElementBase from "../src/ElementBase";
 
 
 /* Element with a simple template */
@@ -19,3 +19,14 @@ class ElementWithRealTemplate extends ElementBase {
   }
 }
 document.registerElement('element-with-real-template', ElementWithRealTemplate);
+
+
+/* Element created via ES5-compatible .extend(). */
+// let Es5ClassViaExtend = ElementBase.extend({
+//   get foo() {
+//     return "Hello";
+//   }
+// });
+// document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
+
+export { ElementWithStringTemplate, ElementWithRealTemplate };

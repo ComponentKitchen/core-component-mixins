@@ -7,47 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = (function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-})();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) {
-  var _again = true;_function: while (_again) {
-    var object = _x,
-        property = _x2,
-        receiver = _x3;desc = parent = getter = undefined;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
-      var parent = Object.getPrototypeOf(object);if (parent === null) {
-        return undefined;
-      } else {
-        _x = parent;_x2 = property;_x3 = receiver;_again = true;continue _function;
-      }
-    } else if ("value" in desc) {
-      return desc.value;
-    } else {
-      var getter = desc.get;if (getter === undefined) {
-        return undefined;
-      }return getter.call(receiver);
-    }
-  }
-};
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var ElementBase = (function (_HTMLElement) {
   _inherits(ElementBase, _HTMLElement);
@@ -84,6 +50,11 @@ var ElementBase = (function (_HTMLElement) {
       }
       marshallAttributesToProperties(this);
     }
+
+    // static extend(properties) {
+    //   return {};
+    // }
+
   }, {
     key: "log",
     value: function log(text) {
@@ -150,7 +121,6 @@ document.registerElement('element-base', ElementBase);
 exports["default"] = ElementBase;
 module.exports = exports["default"];
 
-
 },{}],2:[function(require,module,exports){
 "use strict";
 
@@ -173,10 +143,19 @@ suite("ElementBase", function () {
     assert(element.root);
     assert.equal(element.root.textContent.trim(), "Hello");
   });
+
+  test("can create component class with ES5-compatible .extend()", function () {
+    var element = document.createElement('es5-class-via-extend');
+    assert.equal(element.foo, "Hello");
+  });
 });
 
 },{"./testElements":3}],3:[function(require,module,exports){
 "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -188,9 +167,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _distElementBase = require("../dist/ElementBase");
+var _srcElementBase = require("../src/ElementBase");
 
-var _distElementBase2 = _interopRequireDefault(_distElementBase);
+var _srcElementBase2 = _interopRequireDefault(_srcElementBase);
 
 /* Element with a simple template */
 
@@ -211,7 +190,7 @@ var ElementWithStringTemplate = (function (_ElementBase) {
   }]);
 
   return ElementWithStringTemplate;
-})(_distElementBase2["default"]);
+})(_srcElementBase2["default"]);
 
 document.registerElement('element-with-string-template', ElementWithStringTemplate);
 
@@ -236,8 +215,19 @@ var ElementWithRealTemplate = (function (_ElementBase2) {
   }]);
 
   return ElementWithRealTemplate;
-})(_distElementBase2["default"]);
+})(_srcElementBase2["default"]);
 
 document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
-},{"../dist/ElementBase":1}]},{},[2]);
+/* Element created via ES5-compatible .extend(). */
+// let Es5ClassViaExtend = ElementBase.extend({
+//   get foo() {
+//     return "Hello";
+//   }
+// });
+// document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
+
+exports.ElementWithStringTemplate = ElementWithStringTemplate;
+exports.ElementWithRealTemplate = ElementWithRealTemplate;
+
+},{"../src/ElementBase":1}]},{},[2]);

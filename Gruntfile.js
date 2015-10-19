@@ -14,6 +14,11 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
+          'dist/ElementBase.js': 'src/ElementBase.js'
+        }
+      },
+      demos: {
+        files: {
           'build/demos.js': 'demos/GreetElement.js'
         }
       },
@@ -26,7 +31,7 @@ module.exports = function (grunt) {
 
     watch: {
       scripts: {
-        files: ['**/*.js'],
+        files: ['demos/*.js', 'src/*.js', 'test/*.js'],
         tasks: ['build']
       }
     }

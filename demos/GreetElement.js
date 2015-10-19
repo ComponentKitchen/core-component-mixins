@@ -1,4 +1,4 @@
-import ElementBase from "../dist/ElementBase";
+import ElementBase from "../src/ElementBase";
 
 /* Define a custom element. */
 class GreetElement extends ElementBase {
