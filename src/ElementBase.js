@@ -40,14 +40,16 @@ class ElementBase extends HTMLElement {
   log(text) {
     console.log(`${this.localName}: ${text}`);
   }
-  
+
+  /*
+   * Mix the indicated properties into the class' prototype.
+   * This is a destructive operation.
+   */
   static mixin(properties) {
-    let prototype = Object.getPrototypeOf(this);
     Object.getOwnPropertyNames(properties).forEach((name) => {
       let descriptor = Object.getOwnPropertyDescriptor(properties, name);
-      Object.defineProperty(prototype, name, descriptor);
+      Object.defineProperty(this.prototype, name, descriptor);
     });
-    this.prototype = prototype;
     return this;
   }
 

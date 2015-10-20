@@ -51,5 +51,5 @@ let simpleMixin = {
   property: 'value'
 };
 class ElementWithMixin extends ElementBase {}
-// ElementWithMixin.mixin(simpleMixin);
+ElementWithMixin.mixin(simpleMixin);
 document.registerElement('element-with-mixin', ElementWithMixin);
