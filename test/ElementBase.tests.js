@@ -28,16 +28,17 @@ suite("ElementBase", () => {
     assert.equal(element.customProperty, "Hello");
   });
 
-  test("element can use mixin to define a property", () => {
-    let element = document.createElement('element-with-property-mixin');
+  test("element can use behavior to define a property", () => {
+    let element = document.createElement('element-with-property-behavior');
+    // assert.equal(element.behaviors.length, 1);
     assert.equal(element.property, 'value');
   });
 
-  test("mixin method invokes both mixin and component's implementation", () => {
-    let element = document.createElement('element-with-method-mixin');
-    element.method();
-    assert(element.mixinMethodInvoked);
-    assert(element.componentMethodInvoked);
-  });
+  // test("behavior method invokes both behavior's and component's implementation", () => {
+  //   let element = document.createElement('element-with-method-behavior');
+  //   element.method();
+  //   assert(element.behaviorMethodInvoked);
+  //   assert(element.componentMethodInvoked);
+  // });
 
 });

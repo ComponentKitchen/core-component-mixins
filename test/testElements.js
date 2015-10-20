@@ -46,25 +46,30 @@ class ElementWithCamelCaseProperty extends ElementBase {
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
 
 
-/* Element that mixes in a property. */
-let propertyMixin = {
-  property: 'value'
-};
-class ElementWithPropertyMixin extends ElementBase {}
-ElementWithPropertyMixin.mixin(propertyMixin);
-document.registerElement('element-with-property-mixin', ElementWithPropertyMixin);
-
-
-/* Element that mixes in a method. */
-let methodMixin = {
-  method: function() {
-    this.mixinMethodInvoked = true;
+/* Element behavior that defines a property. */
+class PropertyBehavior extends ElementBase.Behavior {
+  get property() {
+    return 'value';
   }
-};
-class ElementWithMethodMixin extends ElementBase {
+}
+class ElementWithPropertyBehavior extends ElementBase {}
+// ElementWithPropertyBehavior.behaviors = [PropertyBehavior];
+// PropertyBehavior(ElementWithPropertyBehavior);
+PropertyBehavior.applyBehavior(ElementWithPropertyBehavior);
+document.registerElement('element-with-property-behavior', ElementWithPropertyBehavior);
+
+
+/* Behavior that defines a method. */
+class MethodBehavior extends ElementBase.Behavior {
+  method() {
+    this.behaviorMethodInvoked = true;
+  }
+}
+class ElementWithMethodBehavior extends ElementBase {
   method() {
     this.componentMethodInvoked = true;
   }
 }
-ElementWithMethodMixin.mixin(methodMixin);
-document.registerElement('element-with-method-mixin', ElementWithMethodMixin);
+// ElementWithMethodBehavior.behaviors = [MethodBehavior];
+MethodBehavior.applyBehavior(ElementWithMethodBehavior);
+document.registerElement('element-with-method-behavior', ElementWithMethodBehavior);

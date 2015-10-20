@@ -41,9 +41,14 @@ class ElementBase extends HTMLElement {
     console.log(`${this.localName}: ${text}`);
   }
 
+  // static get behaviors() {
+  //   return this._behaviors;
+  // }
+
   /*
    * Mix the indicated properties into the class' prototype.
    * This is a destructive operation.
+   * TODO: If only .extend() needs this, fold into that method.
    */
   static mixin(properties) {
     Object.getOwnPropertyNames(properties).forEach((name) => {
@@ -107,6 +112,26 @@ function marshallAttributesToProperties(element) {
     element.attributeChangedCallback(attribute.name, undefined, attribute.value);
   });
 }
+
+
+ElementBase.Behavior = class ElementBehavior {
+
+  static applyBehavior(target) {
+    let prototype = target.prototype;
+    Object.getOwnPropertyNames(this.prototype).forEach((name) => {
+      if (name !== 'constructor') {
+        let descriptor = Object.getOwnPropertyDescriptor(this.prototype, name);
+        Object.defineProperty(prototype, name, descriptor);
+      }
+    });
+    // if (!target._behaviors) {
+    //   target._behaviors = [];
+    // }
+    // target._behaviors.push(this);
+  }
+
+};
+
 
 document.registerElement('element-base', ElementBase);
 
