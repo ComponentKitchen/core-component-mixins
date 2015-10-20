@@ -70,3 +70,18 @@ class ElementWithMethodBehavior extends ElementBase {
 }
 MethodBehavior.applyBehavior(ElementWithMethodBehavior);
 document.registerElement('element-with-method-behavior', ElementWithMethodBehavior);
+
+
+/* Behavior that defines a createdCallback method. */
+class CreatedBehavior extends ElementBase.Behavior {
+  createdCallback() {
+    this.behaviorCreatedCallbackInvoked = true;
+  }
+}
+class ElementWithCreatedBehavior extends ElementBase {
+  get template() {
+    return "Hello";
+  }
+}
+CreatedBehavior.applyBehavior(ElementWithCreatedBehavior);
+document.registerElement('element-with-created-behavior', ElementWithCreatedBehavior);

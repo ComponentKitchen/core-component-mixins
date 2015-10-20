@@ -74,7 +74,7 @@ function createShadowRootWithTemplate(element, template) {
     // Upgrade plain string to real template.
     template = createTemplateWithInnerHTML(template);
   }
-  element.log("cloning template into shadow root");
+  // element.log("cloning template into shadow root");
   element.root = element.createShadowRoot();
   let clone = document.importNode(template.content, true);
   element.root.appendChild(clone);
@@ -117,7 +117,7 @@ ElementBase.Behavior = class ElementBehavior {
     Object.getOwnPropertyNames(this.prototype).forEach((name) => {
       if (name !== 'constructor') {
         let sourceDescriptor = Object.getOwnPropertyDescriptor(this.prototype, name);
-        let targetDescriptor = Object.getOwnPropertyDescriptor(prototype, name);
+        let targetDescriptor = getPropertyDescriptor(prototype, name);
         let newDescriptor;
         if (targetDescriptor &&
               typeof targetDescriptor.value === 'function' &&
@@ -145,6 +145,18 @@ function compose(f, g) {
     f.apply(this, args);
     g.apply(this, args);
   };
+}
+
+function getPropertyDescriptor(prototype, name) {
+  if (!prototype) {
+    return null;
+  }
+  let descriptor = Object.getOwnPropertyDescriptor(prototype, name);
+  if (descriptor) {
+    return descriptor;
+  }
+  let superProto = Object.getPrototypeOf(prototype);
+  return getPropertyDescriptor(superProto, name);
 }
 
 

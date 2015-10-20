@@ -40,4 +40,10 @@ suite("ElementBase", () => {
     assert(element.componentMethodInvoked);
   });
 
+  test("behavior can define createdCallback", () => {
+    let element = document.createElement('element-with-created-behavior');
+    assert(element.behaviorCreatedCallbackInvoked);
+    assert.equal(element.root.textContent.trim(), "Hello");
+  });
+
 });
