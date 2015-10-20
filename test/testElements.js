@@ -53,8 +53,6 @@ class PropertyBehavior extends ElementBase.Behavior {
   }
 }
 class ElementWithPropertyBehavior extends ElementBase {}
-// ElementWithPropertyBehavior.behaviors = [PropertyBehavior];
-// PropertyBehavior(ElementWithPropertyBehavior);
 PropertyBehavior.applyBehavior(ElementWithPropertyBehavior);
 document.registerElement('element-with-property-behavior', ElementWithPropertyBehavior);
 
@@ -70,6 +68,5 @@ class ElementWithMethodBehavior extends ElementBase {
     this.componentMethodInvoked = true;
   }
 }
-// ElementWithMethodBehavior.behaviors = [MethodBehavior];
 MethodBehavior.applyBehavior(ElementWithMethodBehavior);
 document.registerElement('element-with-method-behavior', ElementWithMethodBehavior);

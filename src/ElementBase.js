@@ -4,7 +4,7 @@ class ElementBase extends HTMLElement {
 
   // Handle a change to the attribute with the given name.
   attributeChangedCallback(name, oldValue, newValue) {
-    this.log(`attribute ${name} changed to ${newValue}`);
+    // this.log(`attribute ${name} changed to ${newValue}`);
     // If the attribute name corresponds to a property name, then set that
     // property.
     // TODO: This looks up the existence of the property each time. It would
@@ -18,7 +18,7 @@ class ElementBase extends HTMLElement {
   }
 
   createdCallback() {
-    this.log("created");
+    // this.log("created");
     if (this.template) {
       createShadowRootWithTemplate(this, this.template);
     }
@@ -40,10 +40,6 @@ class ElementBase extends HTMLElement {
   log(text) {
     console.log(`${this.localName}: ${text}`);
   }
-
-  // static get behaviors() {
-  //   return this._behaviors;
-  // }
 
   /*
    * Mix the indicated properties into the class' prototype.
@@ -120,17 +116,36 @@ ElementBase.Behavior = class ElementBehavior {
     let prototype = target.prototype;
     Object.getOwnPropertyNames(this.prototype).forEach((name) => {
       if (name !== 'constructor') {
-        let descriptor = Object.getOwnPropertyDescriptor(this.prototype, name);
-        Object.defineProperty(prototype, name, descriptor);
+        let sourceDescriptor = Object.getOwnPropertyDescriptor(this.prototype, name);
+        let targetDescriptor = Object.getOwnPropertyDescriptor(prototype, name);
+        let newDescriptor;
+        if (targetDescriptor &&
+              typeof targetDescriptor.value === 'function' &&
+              typeof sourceDescriptor.value === 'function') {
+          // Compose method.
+          let composed = compose(sourceDescriptor.value, targetDescriptor.value);
+          newDescriptor = {
+            configurable: true,
+            enumerable: true,
+            value: composed
+          };
+        } else {
+          // Can use as is.
+          newDescriptor = sourceDescriptor;
+        }
+        Object.defineProperty(prototype, name, newDescriptor);
       }
     });
-    // if (!target._behaviors) {
-    //   target._behaviors = [];
-    // }
-    // target._behaviors.push(this);
   }
 
 };
+
+function compose(f, g) {
+  return function(...args) {
+    f.apply(this, args);
+    g.apply(this, args);
+  };
+}
 
 
 document.registerElement('element-base', ElementBase);
