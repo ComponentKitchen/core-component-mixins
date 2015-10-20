@@ -27,29 +27,26 @@ class ElementBase extends HTMLElement {
   }
 
   /*
-   * Create a subclass with the given members on its prototype.
+   * Return a subclass of the current class that includes the members indicated
+   * in the argument. The argument can be a plain JavaScript object, or a class
+   * whose prototype contains the members that will be copied.
    *
-   * This .extend() facility is provided solely as a means to create component
-   * classes in ES5. ES6 users should use "class ... extends ElementBase".
+   * This can be used for a couple of purposes:
+   * 1. Extend a class with a mixin/behavior.
+   * 2. Create a component class in ES5.
+   *
    */
-  static extend(properties) {
-    class newClass extends ElementBase {}
-    newClass.mixin(properties);
+  static extend(extension) {
+    class newClass extends this {}
+    let members = typeof extension === 'function' ?
+      extension.prototype :
+      extension;
+    copyMembers(members, newClass.prototype);
     return newClass;
   }
 
   log(text) {
     console.log(`${this.localName}: ${text}`);
-  }
-
-  /*
-   * Mix the indicated properties into the class' prototype.
-   * This is a destructive operation.
-   * TODO: If only .extend() needs this, fold into that method.
-   */
-  static mixin(properties) {
-    copyMembers(properties, this.prototype);
-    return this;
   }
 
   get superPrototype() {
@@ -121,24 +118,6 @@ function propertyToAttributeName(propertyName) {
   return attributeName;
 }
 
-
-ElementBase.ClassExtension = class ClassExtension {
-
-  static extend(target) {
-    let newClass = class NewClass {};
-    copyMembers(this.prototype, newClass.prototype);
-    Object.setPrototypeOf(newClass.prototype, target.prototype);
-    return newClass;
-  }
-
-};
-
-function compose(f, g) {
-  return function(...args) {
-    f.apply(this, args);
-    g.apply(this, args);
-  };
-}
 
 function getPropertyDescriptor(prototype, name) {
   if (!prototype) {

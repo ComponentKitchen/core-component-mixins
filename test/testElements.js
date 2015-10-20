@@ -47,18 +47,18 @@ document.registerElement('element-with-camel-case-property', ElementWithCamelCas
 
 
 /* Element extension that defines a property. */
-class PropertyExtension extends ElementBase.ClassExtension {
+class PropertyExtension {
   get property() {
     return 'value';
   }
 }
 class ElementWithPropertyExtension extends ElementBase {}
-ElementWithPropertyExtension = PropertyExtension.extend(ElementWithPropertyExtension);
+ElementWithPropertyExtension = ElementWithPropertyExtension.extend(PropertyExtension);
 document.registerElement('element-with-property-extension', ElementWithPropertyExtension);
 
 
-/* Behavior that defines a method. */
-class MethodExtension extends ElementBase.ClassExtension {
+/* Extension that defines a method. */
+class MethodExtension {
   method() {
     this.superPrototype.method.call(this);
     this.extensionMethodInvoked = true;
@@ -69,12 +69,12 @@ class ElementWithMethodExtension extends ElementBase {
     this.componentMethodInvoked = true;
   }
 }
-ElementWithMethodExtension = MethodExtension.extend(ElementWithMethodExtension);
+ElementWithMethodExtension = ElementWithMethodExtension.extend(MethodExtension);
 document.registerElement('element-with-method-extension', ElementWithMethodExtension);
 
 
-/* Behavior that defines a createdCallback method. */
-class CreatedExtension extends ElementBase.ClassExtension {
+/* Extension that defines a createdCallback method. */
+class CreatedExtension {
   createdCallback() {
     this.superPrototype.createdCallback.call(this);
     this.extensionCreatedCallbackInvoked = true;
@@ -85,5 +85,5 @@ class ElementWithCreatedExtension extends ElementBase {
     return "Hello";
   }
 }
-ElementWithCreatedExtension = CreatedExtension.extend(ElementWithCreatedExtension);
+ElementWithCreatedExtension = ElementWithCreatedExtension.extend(CreatedExtension);
 document.registerElement('element-with-created-extension', ElementWithCreatedExtension);
