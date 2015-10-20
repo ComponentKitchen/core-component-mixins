@@ -42,15 +42,12 @@ class ElementBase extends HTMLElement {
       extension.prototype :
       extension;
     copyMembers(members, newClass.prototype);
+    newClass.prototype.superPrototype = this.prototype;
     return newClass;
   }
 
   log(text) {
     console.log(`${this.localName}: ${text}`);
-  }
-
-  get superPrototype() {
-    return Object.getPrototypeOf(Object.getPrototypeOf(this));
   }
 
 }
