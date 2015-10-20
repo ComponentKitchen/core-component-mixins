@@ -21,7 +21,7 @@ class ElementWithRealTemplate extends ElementBase {
 document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 
-/* Element created via ES5-compatible .extend(). */
+/* Element created via ES5-compatible .extend() */
 let Es5ClassViaExtend = ElementBase.extend({
   get customProperty() {
     return 'property';
@@ -34,7 +34,7 @@ let Es5ClassViaExtend = ElementBase.extend({
 document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
 
 
-/* Element with camelCase property name. */
+/* Element with camelCase property name */
 class ElementWithCamelCaseProperty extends ElementBase {
   get customProperty() {
     return this._customProperty;
@@ -46,4 +46,10 @@ class ElementWithCamelCaseProperty extends ElementBase {
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
 
 
-// export { ElementWithStringTemplate, ElementWithRealTemplate };
+/* Element with mixin */
+let simpleMixin = {
+  property: 'value'
+};
+class ElementWithMixin extends ElementBase {}
+// ElementWithMixin.mixin(simpleMixin);
+document.registerElement('element-with-mixin', ElementWithMixin);

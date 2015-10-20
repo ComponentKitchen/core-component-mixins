@@ -79,13 +79,19 @@ var ElementBase = (function (_HTMLElement) {
         return newClass;
       })(ElementBase);
 
-      var prototype = Object.getPrototypeOf(newClass);
+      newClass.mixin(properties);
+      return newClass;
+    }
+  }, {
+    key: 'mixin',
+    value: function mixin(properties) {
+      var prototype = Object.getPrototypeOf(this);
       Object.getOwnPropertyNames(properties).forEach(function (name) {
         var descriptor = Object.getOwnPropertyDescriptor(properties, name);
         Object.defineProperty(prototype, name, descriptor);
       });
-      newClass.prototype = prototype;
-      return newClass;
+      this.prototype = prototype;
+      return this;
     }
   }]);
 
@@ -199,6 +205,11 @@ suite("ElementBase", function () {
     element.setAttribute('custom-property', "Hello");
     assert.equal(element.customProperty, "Hello");
   });
+
+  test("element can use mixin to define a property", function () {
+    var element = document.createElement('element-with-mixin');
+    assert.equal(element.property, 'value');
+  });
 });
 
 },{"./testElements":3}],3:[function(require,module,exports){
@@ -266,7 +277,7 @@ var ElementWithRealTemplate = (function (_ElementBase2) {
 
 document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
-/* Element created via ES5-compatible .extend(). */
+/* Element created via ES5-compatible .extend() */
 var Es5ClassViaExtend = _srcElementBase2["default"].extend(Object.defineProperties({
   method: function method() {
     return 'method';
@@ -283,7 +294,7 @@ var Es5ClassViaExtend = _srcElementBase2["default"].extend(Object.defineProperti
 }));
 document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
 
-/* Element with camelCase property name. */
+/* Element with camelCase property name */
 
 var ElementWithCamelCaseProperty = (function (_ElementBase3) {
   _inherits(ElementWithCamelCaseProperty, _ElementBase3);
@@ -309,6 +320,24 @@ var ElementWithCamelCaseProperty = (function (_ElementBase3) {
 
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
 
-// export { ElementWithStringTemplate, ElementWithRealTemplate };
+/* Element with mixin */
+var simpleMixin = {
+  property: 'value'
+};
+
+var ElementWithMixin = (function (_ElementBase4) {
+  _inherits(ElementWithMixin, _ElementBase4);
+
+  function ElementWithMixin() {
+    _classCallCheck(this, ElementWithMixin);
+
+    _get(Object.getPrototypeOf(ElementWithMixin.prototype), "constructor", this).apply(this, arguments);
+  }
+
+  // ElementWithMixin.mixin(simpleMixin);
+  return ElementWithMixin;
+})(_srcElementBase2["default"]);
+
+document.registerElement('element-with-mixin', ElementWithMixin);
 
 },{"../src/ElementBase":1}]},{},[2]);

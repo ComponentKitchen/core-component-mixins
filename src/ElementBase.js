@@ -33,17 +33,22 @@ class ElementBase extends HTMLElement {
    */
   static extend(properties) {
     class newClass extends ElementBase {}
-    let prototype = Object.getPrototypeOf(newClass);
-    Object.getOwnPropertyNames(properties).forEach((name) => {
-      let descriptor = Object.getOwnPropertyDescriptor(properties, name);
-      Object.defineProperty(prototype, name, descriptor);
-    });
-    newClass.prototype = prototype;
+    newClass.mixin(properties);
     return newClass;
   }
 
   log(text) {
     console.log(`${this.localName}: ${text}`);
+  }
+  
+  static mixin(properties) {
+    let prototype = Object.getPrototypeOf(this);
+    Object.getOwnPropertyNames(properties).forEach((name) => {
+      let descriptor = Object.getOwnPropertyDescriptor(properties, name);
+      Object.defineProperty(prototype, name, descriptor);
+    });
+    this.prototype = prototype;
+    return this;
   }
 
 }

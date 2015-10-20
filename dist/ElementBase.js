@@ -79,13 +79,19 @@ var ElementBase = (function (_HTMLElement) {
         return newClass;
       })(ElementBase);
 
-      var prototype = Object.getPrototypeOf(newClass);
+      newClass.mixin(properties);
+      return newClass;
+    }
+  }, {
+    key: 'mixin',
+    value: function mixin(properties) {
+      var prototype = Object.getPrototypeOf(this);
       Object.getOwnPropertyNames(properties).forEach(function (name) {
         var descriptor = Object.getOwnPropertyDescriptor(properties, name);
         Object.defineProperty(prototype, name, descriptor);
       });
-      newClass.prototype = prototype;
-      return newClass;
+      this.prototype = prototype;
+      return this;
     }
   }]);
 
