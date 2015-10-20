@@ -29,4 +29,17 @@ let Es5ClassViaExtend = ElementBase.extend({
 });
 document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
 
-export { ElementWithStringTemplate, ElementWithRealTemplate };
+
+/* Element with camelCase property name. */
+class ElementWithCamelCaseProperty extends ElementBase {
+  get fooBar() {
+    return this._fooBar;
+  }
+  set fooBar(value) {
+    this._fooBar = value;
+  }
+}
+document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
+
+
+// export { ElementWithStringTemplate, ElementWithRealTemplate };

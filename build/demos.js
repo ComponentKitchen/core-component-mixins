@@ -58,19 +58,19 @@ module.exports = exports['default'];
 },{"../src/ElementBase":2}],2:[function(require,module,exports){
 /* Base class for defining custom elements. */
 
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var ElementBase = (function (_HTMLElement) {
   _inherits(ElementBase, _HTMLElement);
@@ -78,15 +78,17 @@ var ElementBase = (function (_HTMLElement) {
   function ElementBase() {
     _classCallCheck(this, ElementBase);
 
-    _get(Object.getPrototypeOf(ElementBase.prototype), "constructor", this).apply(this, arguments);
+    _get(Object.getPrototypeOf(ElementBase.prototype), 'constructor', this).apply(this, arguments);
   }
 
+  // Convert camel case fooBar name to hyphenated foo-bar.
+
   _createClass(ElementBase, [{
-    key: "attributeChangedCallback",
+    key: 'attributeChangedCallback',
 
     // Handle a change to the attribute with the given name.
     value: function attributeChangedCallback(name, oldValue, newValue) {
-      this.log("attribute " + name + " changed to " + newValue);
+      this.log('attribute ' + name + ' changed to ' + newValue);
       // If the attribute name corresponds to a property name, then set that
       // property.
       // TODO: This looks up the existence of the property each time. It would
@@ -94,12 +96,13 @@ var ElementBase = (function (_HTMLElement) {
       // defined by the element (including base classes).
       // TODO: Ignore standard attribute name.
       // TODO: Map hyphenated foo-bar attribute names to camel case fooBar names.
-      if (hasProperty(this, name)) {
-        this[name] = newValue;
+      var propertyName = attributeToPropertyName(name);
+      if (hasProperty(this, propertyName)) {
+        this[propertyName] = newValue;
       }
     }
   }, {
-    key: "createdCallback",
+    key: 'createdCallback',
     value: function createdCallback() {
       this.log("created");
       if (this.template) {
@@ -115,12 +118,12 @@ var ElementBase = (function (_HTMLElement) {
      * classes in ES5. ES6 users should use "class ... extends ElementBase".
      */
   }, {
-    key: "log",
+    key: 'log',
     value: function log(text) {
-      console.log(this.localName + ": " + text);
+      console.log(this.localName + ': ' + text);
     }
   }], [{
-    key: "extend",
+    key: 'extend',
     value: function extend(properties) {
       var newClass = (function (_ElementBase) {
         _inherits(newClass, _ElementBase);
@@ -128,7 +131,7 @@ var ElementBase = (function (_HTMLElement) {
         function newClass() {
           _classCallCheck(this, newClass);
 
-          _get(Object.getPrototypeOf(newClass.prototype), "constructor", this).apply(this, arguments);
+          _get(Object.getPrototypeOf(newClass.prototype), 'constructor', this).apply(this, arguments);
         }
 
         return newClass;
@@ -146,6 +149,21 @@ var ElementBase = (function (_HTMLElement) {
 
   return ElementBase;
 })(HTMLElement);
+
+function attributeToPropertyName(attributeName) {
+  var propertyName = attributeName.replace(/-([a-z])/g, function (m) {
+    return m[1].toUpperCase();
+  });
+  return propertyName;
+}
+
+// Convert hyphenated foo-bar name to camel case fooBar.
+function propertyToAttributeName(propertyName) {
+  var attributeName = propertyName.replace(/([a-z][A-Z])/g, function (g) {
+    return g[0] + '-' + g[1].toLowerCase();
+  });
+  return attributeName;
+}
 
 function createShadowRootWithTemplate(element, template) {
   if (typeof template === 'string') {
@@ -200,7 +218,7 @@ function marshallAttributesToProperties(element) {
 
 document.registerElement('element-base', ElementBase);
 
-exports["default"] = ElementBase;
-module.exports = exports["default"];
+exports['default'] = ElementBase;
+module.exports = exports['default'];
 
 },{}]},{},[1]);

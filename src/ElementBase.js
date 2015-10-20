@@ -12,8 +12,9 @@ class ElementBase extends HTMLElement {
     // defined by the element (including base classes).
     // TODO: Ignore standard attribute name.
     // TODO: Map hyphenated foo-bar attribute names to camel case fooBar names.
-    if (hasProperty(this, name)) {
-      this[name] = newValue;
+    let propertyName = attributeToPropertyName(name);
+    if (hasProperty(this, propertyName)) {
+      this[propertyName] = newValue;
     }
   }
 
@@ -46,6 +47,19 @@ class ElementBase extends HTMLElement {
     console.log(`${this.localName}: ${text}`);
   }
 
+}
+
+
+// Convert camel case fooBar name to hyphenated foo-bar.
+function attributeToPropertyName(attributeName) {
+  let propertyName = attributeName.replace(/-([a-z])/g, (m) => m[1].toUpperCase());
+  return propertyName;
+}
+
+// Convert hyphenated foo-bar name to camel case fooBar.
+function propertyToAttributeName(propertyName) {
+  let attributeName = propertyName.replace(/([a-z][A-Z])/g, (g) => g[0] + '-' + g[1].toLowerCase());
+  return attributeName;
 }
 
 function createShadowRootWithTemplate(element, template) {

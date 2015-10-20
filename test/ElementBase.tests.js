@@ -19,4 +19,11 @@ suite("ElementBase", () => {
     assert.equal(element.foo, "Hello");
   });
 
+  test("hyphenated attribute marshalled to corresponding camelCase property", () => {
+    var element = document.createElement('element-with-camel-case-property');
+    assert.isUndefined(element.fooBar);
+    element.setAttribute('foo-bar', "Hello");
+    assert.equal(element.fooBar, "Hello");
+  });
+
 });
