@@ -47,11 +47,12 @@ class ElementBase extends HTMLElement {
    * TODO: If only .extend() needs this, fold into that method.
    */
   static mixin(properties) {
-    Object.getOwnPropertyNames(properties).forEach((name) => {
-      let descriptor = Object.getOwnPropertyDescriptor(properties, name);
-      Object.defineProperty(this.prototype, name, descriptor);
-    });
+    copyMembers(properties, this.prototype);
     return this;
+  }
+
+  get superPrototype() {
+    return Object.getPrototypeOf(Object.getPrototypeOf(this));
   }
 
 }
@@ -63,10 +64,14 @@ function attributeToPropertyName(attributeName) {
   return propertyName;
 }
 
-// Convert hyphenated foo-bar name to camel case fooBar.
-function propertyToAttributeName(propertyName) {
-  let attributeName = propertyName.replace(/([a-z][A-Z])/g, (g) => g[0] + '-' + g[1].toLowerCase());
-  return attributeName;
+function copyMembers(members, target) {
+  Object.getOwnPropertyNames(members).forEach((name) => {
+    if (name !== 'constructor') {
+      let descriptor = Object.getOwnPropertyDescriptor(members, name);
+      Object.defineProperty(target, name, descriptor);
+    }
+  });
+  return target;
 }
 
 function createShadowRootWithTemplate(element, template) {
@@ -109,33 +114,20 @@ function marshallAttributesToProperties(element) {
   });
 }
 
+// Convert hyphenated foo-bar name to camel case fooBar.
+function propertyToAttributeName(propertyName) {
+  let attributeName = propertyName.replace(/([a-z][A-Z])/g, (g) => g[0] + '-' + g[1].toLowerCase());
+  return attributeName;
+}
 
-ElementBase.Behavior = class ElementBehavior {
 
-  static applyBehavior(target) {
-    let prototype = target.prototype;
-    Object.getOwnPropertyNames(this.prototype).forEach((name) => {
-      if (name !== 'constructor') {
-        let sourceDescriptor = Object.getOwnPropertyDescriptor(this.prototype, name);
-        let targetDescriptor = getPropertyDescriptor(prototype, name);
-        let newDescriptor;
-        if (targetDescriptor &&
-              typeof targetDescriptor.value === 'function' &&
-              typeof sourceDescriptor.value === 'function') {
-          // Compose method.
-          let composed = compose(sourceDescriptor.value, targetDescriptor.value);
-          newDescriptor = {
-            configurable: true,
-            enumerable: true,
-            value: composed
-          };
-        } else {
-          // Can use as is.
-          newDescriptor = sourceDescriptor;
-        }
-        Object.defineProperty(prototype, name, newDescriptor);
-      }
-    });
+ElementBase.ClassExtension = class ClassExtension {
+
+  static extend(target) {
+    let newClass = class NewClass {};
+    copyMembers(this.prototype, newClass.prototype);
+    Object.setPrototypeOf(newClass.prototype, target.prototype);
+    return newClass;
   }
 
 };

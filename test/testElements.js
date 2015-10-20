@@ -46,42 +46,44 @@ class ElementWithCamelCaseProperty extends ElementBase {
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
 
 
-/* Element behavior that defines a property. */
-class PropertyBehavior extends ElementBase.Behavior {
+/* Element extension that defines a property. */
+class PropertyExtension extends ElementBase.ClassExtension {
   get property() {
     return 'value';
   }
 }
-class ElementWithPropertyBehavior extends ElementBase {}
-PropertyBehavior.applyBehavior(ElementWithPropertyBehavior);
-document.registerElement('element-with-property-behavior', ElementWithPropertyBehavior);
+class ElementWithPropertyExtension extends ElementBase {}
+ElementWithPropertyExtension = PropertyExtension.extend(ElementWithPropertyExtension);
+document.registerElement('element-with-property-extension', ElementWithPropertyExtension);
 
 
 /* Behavior that defines a method. */
-class MethodBehavior extends ElementBase.Behavior {
+class MethodExtension extends ElementBase.ClassExtension {
   method() {
-    this.behaviorMethodInvoked = true;
+    this.superPrototype.method.call(this);
+    this.extensionMethodInvoked = true;
   }
 }
-class ElementWithMethodBehavior extends ElementBase {
+class ElementWithMethodExtension extends ElementBase {
   method() {
     this.componentMethodInvoked = true;
   }
 }
-MethodBehavior.applyBehavior(ElementWithMethodBehavior);
-document.registerElement('element-with-method-behavior', ElementWithMethodBehavior);
+ElementWithMethodExtension = MethodExtension.extend(ElementWithMethodExtension);
+document.registerElement('element-with-method-extension', ElementWithMethodExtension);
 
 
 /* Behavior that defines a createdCallback method. */
-class CreatedBehavior extends ElementBase.Behavior {
+class CreatedExtension extends ElementBase.ClassExtension {
   createdCallback() {
-    this.behaviorCreatedCallbackInvoked = true;
+    this.superPrototype.createdCallback.call(this);
+    this.extensionCreatedCallbackInvoked = true;
   }
 }
-class ElementWithCreatedBehavior extends ElementBase {
+class ElementWithCreatedExtension extends ElementBase {
   get template() {
     return "Hello";
   }
 }
-CreatedBehavior.applyBehavior(ElementWithCreatedBehavior);
-document.registerElement('element-with-created-behavior', ElementWithCreatedBehavior);
+ElementWithCreatedExtension = CreatedExtension.extend(ElementWithCreatedExtension);
+document.registerElement('element-with-created-extension', ElementWithCreatedExtension);

@@ -28,21 +28,21 @@ suite("ElementBase", () => {
     assert.equal(element.customProperty, "Hello");
   });
 
-  test("element can use behavior to define a property", () => {
-    let element = document.createElement('element-with-property-behavior');
+  test("element can use extension to define a property", () => {
+    let element = document.createElement('element-with-property-extension');
     assert.equal(element.property, 'value');
   });
 
-  test("behavior method invokes both behavior's and component's implementation", () => {
-    let element = document.createElement('element-with-method-behavior');
+  test("extension method invokes both extension's and component's implementation", () => {
+    let element = document.createElement('element-with-method-extension');
     element.method();
-    assert(element.behaviorMethodInvoked);
+    assert(element.extensionMethodInvoked);
     assert(element.componentMethodInvoked);
   });
 
-  test("behavior can define createdCallback", () => {
-    let element = document.createElement('element-with-created-behavior');
-    assert(element.behaviorCreatedCallbackInvoked);
+  test("extension can define createdCallback", () => {
+    let element = document.createElement('element-with-created-extension');
+    assert(element.extensionCreatedCallbackInvoked);
     assert.equal(element.root.textContent.trim(), "Hello");
   });
 
