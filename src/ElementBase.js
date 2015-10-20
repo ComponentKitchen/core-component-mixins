@@ -19,8 +19,9 @@ class ElementBase extends HTMLElement {
 
   createdCallback() {
     // this.log("created");
-    if (this.template) {
-      createShadowRootWithTemplate(this, this.template);
+    let template = this.template;
+    if (template) {
+      createShadowRootWithTemplate(this, template);
     }
     marshallAttributesToProperties(this);
   }
