@@ -36,14 +36,14 @@ class ElementBase extends HTMLElement {
    * 2. Create a component class in ES5.
    *
    */
-  static extend(extension) {
-    class newClass extends this {}
-    let members = typeof extension === 'function' ?
-      extension.prototype :
-      extension;
-    copyMembers(members, newClass.prototype);
-    newClass.prototype.superPrototype = this.prototype;
-    return newClass;
+  static extend(...extensions) {
+    let subclass;
+    let baseClass = this;
+    extensions.forEach((extension) => {
+      subclass = extendClass(baseClass, extension);
+      baseClass = subclass;
+    });
+    return subclass;
   }
 
   log(text) {
@@ -91,6 +91,16 @@ function createTemplateWithInnerHTML(innerHTML) {
     template.content.appendChild(div.childNodes[0]);
   }
   return template;
+}
+
+function extendClass(baseClass, extension) {
+  class subclass extends baseClass {}
+  let members = typeof extension === 'function' ?
+    extension.prototype :
+    extension;
+  copyMembers(members, subclass.prototype);
+  subclass.prototype.superPrototype = baseClass.prototype;
+  return subclass;
 }
 
 function hasProperty(obj, name) {

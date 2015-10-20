@@ -28,7 +28,7 @@ suite("ElementBase", () => {
     assert.equal(element.customProperty, "Hello");
   });
 
-  test("element can use extension to define a property", () => {
+  test("component can use extension to define a property", () => {
     let element = document.createElement('element-with-property-extension');
     assert.equal(element.property, 'value');
   });
@@ -45,5 +45,13 @@ suite("ElementBase", () => {
     assert(element.extensionCreatedCallbackInvoked);
     assert.equal(element.root.textContent.trim(), "Hello");
   });
+
+  // test("component can have multiple extensions", () => {
+  //   let element = document.createElement('element-with-multiple-extensions');
+  //   assert(element.extensionCreatedCallbackInvoked);
+  //   assert.equal(element.property, 'value');
+  //   element.method();
+  //   assert(element.extensionMethodInvoked);
+  // });
 
 });

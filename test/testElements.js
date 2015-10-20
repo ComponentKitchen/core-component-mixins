@@ -87,3 +87,12 @@ class ElementWithCreatedExtension extends ElementBase {
 }
 ElementWithCreatedExtension = ElementWithCreatedExtension.extend(CreatedExtension);
 document.registerElement('element-with-created-extension', ElementWithCreatedExtension);
+
+
+class ElementWithMultipleExtensions extends ElementBase {}
+ElementWithMultipleExtensions = ElementWithMultipleExtensions.extend(
+  PropertyExtension,
+  MethodExtension,
+  CreatedExtension
+);
+document.registerElement('element-with-multiple-extensions', ElementWithMultipleExtensions);
