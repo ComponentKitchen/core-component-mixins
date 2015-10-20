@@ -50,6 +50,28 @@ class ElementBase extends HTMLElement {
     console.log(`${this.localName}: ${text}`);
   }
 
+  callBase(target, name, ...args) {
+    let superProto = this.super(target);
+    if (superProto) {
+      let descriptor = getPropertyDescriptor(superProto, name);
+      if (descriptor && typeof descriptor.value === 'function') {
+        descriptor.value.apply(this, args);
+      }
+    }
+  }
+
+  // Return the *prototype* for the class directly above the one that
+  // implemented the indicated extension.
+  super(target) {
+    let members = getMembersForExtension(target);
+    for (let c = this.constructor; c !== null; c = Object.getPrototypeOf(c.prototype).constructor) {
+      if (c._implements === members) {
+        return Object.getPrototypeOf(c.prototype);
+      }
+    }
+    return null;
+  }
+
 }
 
 
@@ -95,12 +117,19 @@ function createTemplateWithInnerHTML(innerHTML) {
 
 function extendClass(baseClass, extension) {
   class subclass extends baseClass {}
-  let members = typeof extension === 'function' ?
+  let members = getMembersForExtension(extension);
+  copyMembers(members, subclass.prototype);
+  // subclass.prototype.superPrototype = baseClass.prototype;
+  // Remember which class was extended to create this new class so that
+  // extended methods can call implementations in the super (base) class.
+  subclass._implements = members;
+  return subclass;
+}
+
+function getMembersForExtension(extension) {
+  return typeof extension === 'function' ?
     extension.prototype :
     extension;
-  copyMembers(members, subclass.prototype);
-  subclass.prototype.superPrototype = baseClass.prototype;
-  return subclass;
 }
 
 function hasProperty(obj, name) {
