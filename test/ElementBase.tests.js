@@ -16,14 +16,16 @@ suite("ElementBase", () => {
 
   test("can create component class with ES5-compatible .extend()", () => {
     var element = document.createElement('es5-class-via-extend');
-    assert.equal(element.foo, "Hello");
+    assert.equal(element.customProperty, 'property');
+    assert.equal(element.method(), 'method');
+    assert.equal(element.value, 'value');
   });
 
   test("hyphenated attribute marshalled to corresponding camelCase property", () => {
     var element = document.createElement('element-with-camel-case-property');
-    assert.isUndefined(element.fooBar);
-    element.setAttribute('foo-bar', "Hello");
-    assert.equal(element.fooBar, "Hello");
+    assert.isUndefined(element.customProperty);
+    element.setAttribute('custom-property', "Hello");
+    assert.equal(element.customProperty, "Hello");
   });
 
 });

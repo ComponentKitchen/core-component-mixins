@@ -23,20 +23,24 @@ document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 /* Element created via ES5-compatible .extend(). */
 let Es5ClassViaExtend = ElementBase.extend({
-  get foo() {
-    return "Hello";
-  }
+  get customProperty() {
+    return 'property';
+  },
+  method: function() {
+    return 'method';
+  },
+  value: 'value'
 });
 document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
 
 
 /* Element with camelCase property name. */
 class ElementWithCamelCaseProperty extends ElementBase {
-  get fooBar() {
-    return this._fooBar;
+  get customProperty() {
+    return this._customProperty;
   }
-  set fooBar(value) {
-    this._fooBar = value;
+  set customProperty(value) {
+    this._customProperty = value;
   }
 }
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);

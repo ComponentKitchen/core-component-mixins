@@ -95,7 +95,6 @@ var ElementBase = (function (_HTMLElement) {
       // be more efficient to, e.g., do a one-time computation of all properties
       // defined by the element (including base classes).
       // TODO: Ignore standard attribute name.
-      // TODO: Map hyphenated foo-bar attribute names to camel case fooBar names.
       var propertyName = attributeToPropertyName(name);
       if (hasProperty(this, propertyName)) {
         this[propertyName] = newValue;

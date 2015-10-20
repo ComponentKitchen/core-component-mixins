@@ -38,7 +38,6 @@ var ElementBase = (function (_HTMLElement) {
       // be more efficient to, e.g., do a one-time computation of all properties
       // defined by the element (including base classes).
       // TODO: Ignore standard attribute name.
-      // TODO: Map hyphenated foo-bar attribute names to camel case fooBar names.
       var propertyName = attributeToPropertyName(name);
       if (hasProperty(this, propertyName)) {
         this[propertyName] = newValue;
@@ -189,14 +188,16 @@ suite("ElementBase", function () {
 
   test("can create component class with ES5-compatible .extend()", function () {
     var element = document.createElement('es5-class-via-extend');
-    assert.equal(element.foo, "Hello");
+    assert.equal(element.customProperty, 'property');
+    assert.equal(element.method(), 'method');
+    assert.equal(element.value, 'value');
   });
 
   test("hyphenated attribute marshalled to corresponding camelCase property", function () {
     var element = document.createElement('element-with-camel-case-property');
-    assert.isUndefined(element.fooBar);
-    element.setAttribute('foo-bar', "Hello");
-    assert.equal(element.fooBar, "Hello");
+    assert.isUndefined(element.customProperty);
+    element.setAttribute('custom-property', "Hello");
+    assert.equal(element.customProperty, "Hello");
   });
 });
 
@@ -266,10 +267,15 @@ var ElementWithRealTemplate = (function (_ElementBase2) {
 document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 /* Element created via ES5-compatible .extend(). */
-var Es5ClassViaExtend = _srcElementBase2["default"].extend(Object.defineProperties({}, {
-  foo: {
+var Es5ClassViaExtend = _srcElementBase2["default"].extend(Object.defineProperties({
+  method: function method() {
+    return 'method';
+  },
+  value: 'value'
+}, {
+  customProperty: {
     get: function get() {
-      return "Hello";
+      return 'property';
     },
     configurable: true,
     enumerable: true
@@ -289,12 +295,12 @@ var ElementWithCamelCaseProperty = (function (_ElementBase3) {
   }
 
   _createClass(ElementWithCamelCaseProperty, [{
-    key: "fooBar",
+    key: "customProperty",
     get: function get() {
-      return this._fooBar;
+      return this._customProperty;
     },
     set: function set(value) {
-      this._fooBar = value;
+      this._customProperty = value;
     }
   }]);
 
