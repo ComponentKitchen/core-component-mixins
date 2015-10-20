@@ -46,10 +46,25 @@ class ElementWithCamelCaseProperty extends ElementBase {
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
 
 
-/* Element with mixin */
-let simpleMixin = {
+/* Element that mixes in a property. */
+let propertyMixin = {
   property: 'value'
 };
-class ElementWithMixin extends ElementBase {}
-ElementWithMixin.mixin(simpleMixin);
-document.registerElement('element-with-mixin', ElementWithMixin);
+class ElementWithPropertyMixin extends ElementBase {}
+ElementWithPropertyMixin.mixin(propertyMixin);
+document.registerElement('element-with-property-mixin', ElementWithPropertyMixin);
+
+
+/* Element that mixes in a method. */
+let methodMixin = {
+  method: function() {
+    this.mixinMethodInvoked = true;
+  }
+};
+class ElementWithMethodMixin extends ElementBase {
+  method() {
+    this.componentMethodInvoked = true;
+  }
+}
+ElementWithMethodMixin.mixin(methodMixin);
+document.registerElement('element-with-method-mixin', ElementWithMethodMixin);

@@ -27,10 +27,17 @@ suite("ElementBase", () => {
     element.setAttribute('custom-property', "Hello");
     assert.equal(element.customProperty, "Hello");
   });
-  
+
   test("element can use mixin to define a property", () => {
-    let element = document.createElement('element-with-mixin');
+    let element = document.createElement('element-with-property-mixin');
     assert.equal(element.property, 'value');
+  });
+
+  test("mixin method invokes both mixin and component's implementation", () => {
+    let element = document.createElement('element-with-method-mixin');
+    element.method();
+    assert(element.mixinMethodInvoked);
+    assert(element.componentMethodInvoked);
   });
 
 });
