@@ -2,7 +2,7 @@
  * Demonstration of creation of a base class for a particular framework.
  */
 
-import ExtensibleElement from '../src/ExtensibleElement';
+import ExtensibleElement from '../extensible/ExtensibleElement';
 import TemplateStamping from '../src/TemplateStamping';
 import AttributeMarshalling from '../src/AttributeMarshalling';
 import XTagEvents from './XTagEvents';
