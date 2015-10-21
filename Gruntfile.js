@@ -22,7 +22,7 @@ module.exports = function (grunt) {
       },
       demos: {
         files: {
-          'build/demos.js': 'demos/GreetElement.js'
+          'build/demos.js': 'demos/*.js'
         }
       },
       test: {
