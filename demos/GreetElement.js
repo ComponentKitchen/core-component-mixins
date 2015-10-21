@@ -5,10 +5,10 @@ class GreetElement extends ElementBase {
 
   /* Define a "punctuation" attribute. */
   get punctuation() {
-    return this.root.querySelector('#punctuation').textContent;
+    return this.$.punctuation.textContent;
   }
   set punctuation(value) {
-    this.root.querySelector('#punctuation').textContent = value;
+    this.$.punctuation.textContent = value;
   }
 
   get template() {

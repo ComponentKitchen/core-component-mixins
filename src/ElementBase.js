@@ -6,25 +6,10 @@
  */
 
 import ExtensibleElement from './ExtensibleElement';
+import AutomaticNodeFinding from './AutomaticNodeFinding';
+import AttributeMarshalling from './AttributeMarshalling';
 
 class ElementBase extends ExtensibleElement {
-
-  /*
-   * Handle a change to the attribute with the given name.
-   */
-  attributeChangedCallback(name, oldValue, newValue) {
-    // this.log(`attribute ${name} changed to ${newValue}`);
-    // If the attribute name corresponds to a property name, then set that
-    // property.
-    // TODO: This looks up the existence of the property each time. It would
-    // be more efficient to, e.g., do a one-time computation of all properties
-    // defined by the element (including base classes).
-    // TODO: Ignore standard attribute name.
-    let propertyName = attributeToPropertyName(name);
-    if (hasProperty(this, propertyName)) {
-      this[propertyName] = newValue;
-    }
-  }
 
   /*
    * Base createdCallback implementation.
@@ -38,7 +23,6 @@ class ElementBase extends ExtensibleElement {
     if (template) {
       createShadowRootWithTemplate(this, template);
     }
-    marshallAttributesToProperties(this);
   }
 
   log(text) {
@@ -47,12 +31,6 @@ class ElementBase extends ExtensibleElement {
 
 }
 
-
-// Convert camel case fooBar name to hyphenated foo-bar.
-function attributeToPropertyName(attributeName) {
-  let propertyName = attributeName.replace(/-([a-z])/g, (m) => m[1].toUpperCase());
-  return propertyName;
-}
 
 function createShadowRootWithTemplate(element, template) {
   if (typeof template === 'string') {
@@ -78,42 +56,11 @@ function createTemplateWithInnerHTML(innerHTML) {
   return template;
 }
 
-function hasProperty(obj, name) {
-  if (!obj) {
-    return false;
-  } else if (obj.hasOwnProperty(name)) {
-    return true;
-  } else {
-    return hasProperty(Object.getPrototypeOf(obj), name);
-  }
-}
 
-function marshallAttributesToProperties(element) {
-  [].forEach.call(element.attributes, (attribute) => {
-    element.attributeChangedCallback(attribute.name, undefined, attribute.value);
-  });
-}
-
-// Convert hyphenated foo-bar name to camel case fooBar.
-function propertyToAttributeName(propertyName) {
-  let attributeName = propertyName.replace(/([a-z][A-Z])/g, (g) => g[0] + '-' + g[1].toLowerCase());
-  return attributeName;
-}
-
-
-// class AutomaticNodeFinding {
-//
-//   createdCallback() {
-//     let result = this.super(AutomaticNodeFinding, 'createdCallback');
-//     this.log('woohoo!');
-//     return result;
-//   }
-//
-// }
-//
-// ElementBase = ElementBase.extend(AutomaticNodeFinding);
-
-
+ElementBase = ElementBase.extend(
+  AutomaticNodeFinding,
+  AttributeMarshalling
+);
 document.registerElement('element-base', ElementBase);
 
 export default ElementBase;
