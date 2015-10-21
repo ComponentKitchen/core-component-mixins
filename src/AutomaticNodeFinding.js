@@ -7,10 +7,9 @@ class AutomaticNodeFinding {
 
   createdCallback() {
     this.super(AutomaticNodeFinding, 'createdCallback');
-    if (this.root) {
-      this.log('woohoo!');
+    if (this.shadowRoot) {
       this.$ = {};
-      var nodesWithIds = this.root.querySelectorAll('[id]');
+      var nodesWithIds = this.shadowRoot.querySelectorAll('[id]');
       [].forEach.call(nodesWithIds, (node) => {
         var id = node.getAttribute('id');
         this.$[id] = node;

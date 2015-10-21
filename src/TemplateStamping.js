@@ -22,9 +22,9 @@ class TemplateStamping {
     }
     if (template) {
       // this.log("cloning template into shadow root");
-      this.root = this.createShadowRoot();
+      let root = this.createShadowRoot();
       let clone = document.importNode(template.content, true);
-      this.root.appendChild(clone);
+      root.appendChild(clone);
     }
   }
 
