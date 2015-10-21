@@ -52,8 +52,21 @@ class ExtensibleClass {
    * 1. Extend a class with mixins/behaviors.
    * 2. Create a component class in ES5.
    *
+   * The call
+   *
+   *   MyBaseClass.extend(Extension1, Extension2, Extension3)
+   *
+   * will return a new class of MyBaseClass that implements all the methods in
+   * the three extensions given. The above is equivalent to
+   *
+   *   MyBaseClass.extend(Extension1).extend(Extension2).extend(Extension3)
+   *
    */
   static extend(...extensions) {
+    // We create a new subclass for each extension in turn. The result of
+    // becomes the base class extended by any subsequent extensions. It turns
+    // out that we can use Array.reduce() to concisely express this, using the
+    // current (original) class as the seed for reduce().
     return extensions.reduce(extendClass, this);
   }
 
