@@ -84,7 +84,7 @@ function extendClass(baseClass, extension) {
   if (typeof extension === 'function') {
     // Extending with a class.
     // Copy both static and instance methods.
-    copyMembers(extension, subclass, ['length', 'name', 'prototype']);
+    copyMembers(extension, subclass, Object.getOwnPropertyNames(Function));
     copyMembers(extension.prototype, subclass.prototype, ['constructor']);
   } else {
     // Extending with a plain object.
