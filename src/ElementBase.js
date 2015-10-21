@@ -61,18 +61,12 @@ class ElementBase extends HTMLElement {
    * whose prototype contains the members that will be copied.
    *
    * This can be used for a couple of purposes:
-   * 1. Extend a class with a mixin/behavior.
+   * 1. Extend a class with mixins/behaviors.
    * 2. Create a component class in ES5.
    *
    */
   static extend(...extensions) {
-    let subclass;
-    let baseClass = this;
-    extensions.forEach((extension) => {
-      subclass = extendClass(baseClass, extension);
-      baseClass = subclass;
-    });
-    return subclass;
+    return extensions.reduce(extendClass, this);
   }
 
   log(text) {
@@ -122,11 +116,12 @@ function createTemplateWithInnerHTML(innerHTML) {
   return template;
 }
 
+// Return a new subclass of the given baseclass. The new class' prototype will
+// include the members of the indicated extension.
 function extendClass(baseClass, extension) {
   class subclass extends baseClass {}
   let members = getMembersForExtension(extension);
   copyMembers(members, subclass.prototype);
-  // subclass.prototype.superPrototype = baseClass.prototype;
   // Remember which class was extended to create this new class so that
   // extended methods can call implementations in the super (base) class.
   subclass._implements = members;

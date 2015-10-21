@@ -60,6 +60,7 @@ document.registerElement('element-with-property-extension', ElementWithPropertyE
 /* Extension that defines a method. */
 class MethodExtension {
   method() {
+    // let result = this.super(MethodExtension).method();
     let result = this.callBase(MethodExtension, 'method');
     this.extensionMethodInvoked = true;
     return result;
