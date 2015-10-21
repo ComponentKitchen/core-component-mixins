@@ -1,4 +1,4 @@
-import ElementBase from "../src/ElementBase";
+import ElementBase from '../src/ElementBase';
 
 
 /* Element with a simple template */
