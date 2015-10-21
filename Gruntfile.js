@@ -27,7 +27,7 @@ module.exports = function (grunt) {
       },
       test: {
         files: {
-          'build/tests.js': 'test/ElementBase.tests.js'
+          'build/tests.js': 'test/*.tests.js'
         }
       }
     },
