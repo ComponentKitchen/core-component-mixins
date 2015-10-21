@@ -18,15 +18,15 @@ class ElementBase extends HTMLElement {
   }
 
   /*
-   * Help an extension method call a base class implementation if it exists.
+   * Call a superclass implementation of a method if it exists.
    *
    * This walks up the object's class hierarchy in search of the class that
-   * implemented the given extension. That it goes up one level, and looks up
-   * the hierarchy from that point to see if any base class implements the
-   * named method. If a base method implementation is found, it is invoked with
-   * the given arguments, and the result of that is return.
+   * implemented the given extension. Then it goes up one level, and looks up
+   * the hierarchy from that point to see if any superclass implements the
+   * named method. If a superclass method implementation is found, it is invoked
+   * with the given arguments, and the result of that is returned.
    */
-  callBase(extension, name, ...args) {
+  super(extension, name, ...args) {
     let classFn = getClassImplementingExtension(this, extension);
     if (classFn) {
       let prototype = classFn.prototype;

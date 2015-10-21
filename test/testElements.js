@@ -60,8 +60,7 @@ document.registerElement('element-with-property-extension', ElementWithPropertyE
 /* Extension that defines a method. */
 class MethodExtension {
   method() {
-    // let result = this.super(MethodExtension).method();
-    let result = this.callBase(MethodExtension, 'method');
+    let result = this.super(MethodExtension, 'method');
     this.extensionMethodInvoked = true;
     return result;
   }
@@ -79,7 +78,7 @@ document.registerElement('element-with-method-extension', ElementWithMethodExten
 /* Extension that defines a createdCallback method. */
 class CreatedExtension {
   createdCallback() {
-    this.callBase(CreatedExtension, 'createdCallback');
+    this.super(CreatedExtension, 'createdCallback');
     this.extensionCreatedCallbackInvoked = true;
   }
 }
