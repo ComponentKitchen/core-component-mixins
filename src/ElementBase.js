@@ -55,7 +55,7 @@ class ElementBase extends HTMLElement {
     if (superProto) {
       let descriptor = getPropertyDescriptor(superProto, name);
       if (descriptor && typeof descriptor.value === 'function') {
-        descriptor.value.apply(this, args);
+        return descriptor.value.apply(this, args);
       }
     }
   }

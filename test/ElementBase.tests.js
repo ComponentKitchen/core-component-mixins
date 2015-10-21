@@ -35,7 +35,8 @@ suite("ElementBase", () => {
 
   test("extension method invokes both extension's and component's implementation", () => {
     let element = document.createElement('element-with-method-extension');
-    element.method();
+    let result = element.method();
+    assert.equal(result, 'component result');
     assert(element.extensionMethodInvoked);
     assert(element.componentMethodInvoked);
   });
