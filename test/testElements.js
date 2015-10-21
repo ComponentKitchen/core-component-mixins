@@ -91,6 +91,7 @@ ElementWithCreatedExtension = ElementWithCreatedExtension.extend(CreatedExtensio
 document.registerElement('element-with-created-extension', ElementWithCreatedExtension);
 
 
+/* A component using multiple extensions. */
 class ElementWithMultipleExtensions extends ElementBase {}
 ElementWithMultipleExtensions = ElementWithMultipleExtensions.extend(
   PropertyExtension,
