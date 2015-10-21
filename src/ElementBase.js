@@ -17,6 +17,35 @@ class ElementBase extends HTMLElement {
     }
   }
 
+  /*
+   * Help an extension method call a base class implementation if it exists.
+   *
+   * This walks up the object's class hierarchy in search of the class that
+   * implemented the given extension. That it goes up one level, and looks up
+   * the hierarchy from that point to see if any base class implements the
+   * named method. If a base method implementation is found, it is invoked with
+   * the given arguments, and the result of that is return.
+   */
+  callBase(extension, name, ...args) {
+    let classFn = getClassImplementingExtension(this, extension);
+    if (classFn) {
+      let prototype = classFn.prototype;
+      let superProto = Object.getPrototypeOf(prototype);
+      if (superProto) {
+        let descriptor = getPropertyDescriptor(superProto, name);
+        if (descriptor && typeof descriptor.value === 'function') {
+          return descriptor.value.apply(this, args);
+        }
+      }
+    }
+  }
+
+  /*
+   * Base createdCallback implementation.
+   *
+   * If the component defines a template, a shadow root will be created on the
+   * component instance, and the template stamped into it.
+   */
   createdCallback() {
     // this.log("created");
     let template = this.template;
@@ -48,28 +77,6 @@ class ElementBase extends HTMLElement {
 
   log(text) {
     console.log(`${this.localName}: ${text}`);
-  }
-
-  callBase(target, name, ...args) {
-    let superProto = this.super(target);
-    if (superProto) {
-      let descriptor = getPropertyDescriptor(superProto, name);
-      if (descriptor && typeof descriptor.value === 'function') {
-        return descriptor.value.apply(this, args);
-      }
-    }
-  }
-
-  // Return the *prototype* for the class directly above the one that
-  // implemented the indicated extension.
-  super(target) {
-    let members = getMembersForExtension(target);
-    for (let c = this.constructor; c !== null; c = Object.getPrototypeOf(c.prototype).constructor) {
-      if (c._implements === members) {
-        return Object.getPrototypeOf(c.prototype);
-      }
-    }
-    return null;
   }
 
 }
@@ -126,10 +133,37 @@ function extendClass(baseClass, extension) {
   return subclass;
 }
 
+// Return the class that implemented the indicated extension for the given
+// object.
+function getClassImplementingExtension(obj, extension) {
+  let members = getMembersForExtension(extension);
+  for (let classFn = obj.constructor; classFn !== null; classFn = Object.getPrototypeOf(classFn.prototype).constructor) {
+    if (classFn._implements === members) {
+      return classFn;
+    }
+  }
+  return null;
+}
+
 function getMembersForExtension(extension) {
   return typeof extension === 'function' ?
     extension.prototype :
     extension;
+}
+
+/*
+ * Return a descriptor for the named property, looking up the class hierarchy.
+ */
+function getPropertyDescriptor(prototype, name) {
+  if (!prototype) {
+    return null;
+  }
+  let descriptor = Object.getOwnPropertyDescriptor(prototype, name);
+  if (descriptor) {
+    return descriptor;
+  }
+  let superProto = Object.getPrototypeOf(prototype);
+  return getPropertyDescriptor(superProto, name);
 }
 
 function hasProperty(obj, name) {
@@ -154,18 +188,6 @@ function propertyToAttributeName(propertyName) {
   return attributeName;
 }
 
-
-function getPropertyDescriptor(prototype, name) {
-  if (!prototype) {
-    return null;
-  }
-  let descriptor = Object.getOwnPropertyDescriptor(prototype, name);
-  if (descriptor) {
-    return descriptor;
-  }
-  let superProto = Object.getPrototypeOf(prototype);
-  return getPropertyDescriptor(superProto, name);
-}
 
 
 document.registerElement('element-base', ElementBase);
