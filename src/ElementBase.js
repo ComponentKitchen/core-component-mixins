@@ -1,4 +1,4 @@
-/* 
+/*
  * General-purpose base class for defining custom elements.
  *
  * This ElementBase class implements template stamping into a shadow root,
@@ -99,6 +99,19 @@ function propertyToAttributeName(propertyName) {
   let attributeName = propertyName.replace(/([a-z][A-Z])/g, (g) => g[0] + '-' + g[1].toLowerCase());
   return attributeName;
 }
+
+
+// class AutomaticNodeFinding {
+//
+//   createdCallback() {
+//     let result = this.super(AutomaticNodeFinding, 'createdCallback');
+//     this.log('woohoo!');
+//     return result;
+//   }
+//
+// }
+//
+// ElementBase = ElementBase.extend(AutomaticNodeFinding);
 
 
 document.registerElement('element-base', ElementBase);

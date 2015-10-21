@@ -72,6 +72,8 @@ class ElementWithMethodExtension extends ElementBase {
   }
 }
 ElementWithMethodExtension = ElementWithMethodExtension.extend(MethodExtension);
+window.ElementWithMethodExtension = ElementWithMethodExtension;
+window.MethodExtension = MethodExtension;
 document.registerElement('element-with-method-extension', ElementWithMethodExtension);
 
 

@@ -1,3 +1,24 @@
+/*
+ * A class which can be extended with other classes.
+ */
+
+
+/*
+ * A mapping of class prototypes to the corresponding extension that was used
+ * to implement the extension. This is used by the super(extension, method)
+ * facility that lets extension invoke superclass methods.
+ *
+ * NOTE: This map uses class prototypes, not classes themselves, as the keys.
+ * This is done to support web components as extensible HTMLElement classes.
+ * The document.createElement('custom-element') function can return an element
+ * whose constructor is *not* the function passed to document.registerElement().
+ * That is, element classes have a special munged constructor, and that
+ * constructor can't get included in our map. We use prototypes instead, which
+ * are left along by document.registerElement().
+ */
+let extensionForPrototype = new Map();
+
+
 class ExtensibleClass {
 
   /*
@@ -10,9 +31,8 @@ class ExtensibleClass {
    * with the given arguments, and the result of that is returned.
    */
   super(extension, name, ...args) {
-    let classFn = getClassImplementingExtension(this, extension);
-    if (classFn) {
-      let prototype = classFn.prototype;
+    let prototype = getPrototypeImplementingExtension(this, extension);
+    if (prototype) {
       let superProto = Object.getPrototypeOf(prototype);
       if (superProto) {
         let descriptor = getPropertyDescriptor(superProto, name);
@@ -53,32 +73,38 @@ function copyMembers(members, target) {
   return target;
 }
 
-// Return a new subclass of the given baseclass. The new class' prototype will
-// include the members of the indicated extension.
+/*
+ * Return a new subclass of the given baseclass. The new class' prototype will
+ * include the members of the indicated extension.
+ */
 function extendClass(baseClass, extension) {
   class subclass extends baseClass {}
   let members = getMembersForExtension(extension);
   copyMembers(members, subclass.prototype);
-  // Remember which class was extended to create this new class so that
-  // extended methods can call implementations in the super (base) class.
-  subclass._implements = members;
+  // Remember which extension was used to create this new class so that extended
+  // methods can call implementations in the super (base) class.
+  extensionForPrototype.set(subclass.prototype, extension);
   return subclass;
 }
 
-// Return the class that implemented the indicated extension for the given
-// object.
-function getClassImplementingExtension(obj, extension) {
-  let members = getMembersForExtension(extension);
-  for (let classFn = obj.constructor; classFn !== null; classFn = Object.getPrototypeOf(classFn.prototype).constructor) {
-    if (classFn._implements === members) {
-      return classFn;
+/*
+ * Return the prototype for the class that implemented the indicated extension
+ * for the given object.
+ *
+ */
+function getPrototypeImplementingExtension(obj, extension) {
+  for (let prototype = obj; prototype !== null; prototype = Object.getPrototypeOf(prototype)) {
+    if (extensionForPrototype.get(prototype) === extension) {
+      return prototype;
     }
   }
   return null;
 }
 
-// If the extension is a class (function), return its prototype. Otherwise,
-// return the extension as is.
+/*
+ * If the extension is a class (function), return its prototype. Otherwise,
+ * return the extension as is.
+ */
 function getMembersForExtension(extension) {
   return typeof extension === 'function' ?
     extension.prototype :
