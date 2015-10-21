@@ -3,6 +3,7 @@ extendClass can try:
   subclass.prototype = Object.create(baseClass.prototype, members);
   subclass.prototype.constructor = subclass;
 .extend() copies static members too
+let result = this.super(MethodExtension).method()
 .extend(args) introduces as few classes as possible?
 extensions can inherit -- need to get all properties
 events/listeners a la X-Tag

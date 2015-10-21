@@ -4,14 +4,14 @@ suite("ElementBase", () => {
 
   test("component stamps string template into root", () => {
     let element = document.createElement('element-with-string-template');
-    assert(element.root);
-    assert.equal(element.root.textContent.trim(), "Hello");
+    assert(element.shadowRoot);
+    assert.equal(element.shadowRoot.textContent.trim(), "Hello");
   });
 
   test("component stamps real template into root", () => {
     let element = document.createElement('element-with-real-template');
-    assert(element.root);
-    assert.equal(element.root.textContent.trim(), "Hello");
+    assert(element.shadowRoot);
+    assert.equal(element.shadowRoot.textContent.trim(), "Hello");
   });
 
   test("can create component class with ES5-compatible .extend()", () => {
@@ -44,7 +44,7 @@ suite("ElementBase", () => {
   test("extension can define createdCallback", () => {
     let element = document.createElement('element-with-created-extension');
     assert(element.extensionCreatedCallbackInvoked);
-    assert.equal(element.root.textContent.trim(), "Hello");
+    assert.equal(element.shadowRoot.textContent.trim(), "Hello");
   });
 
   test("component can have multiple extensions", () => {
