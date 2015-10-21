@@ -3,10 +3,10 @@
  * a JavaScript dictionary called "events" that maps event names to handlers.
  */
 
-class XTagListeners {
+class XTagEvents {
 
   createdCallback() {
-    this.super(XTagListeners, 'createdCallback');
+    this.super(XTagEvents, 'createdCallback');
     let events = this.events || [];
     for (let name in events) {
       this.addEventListener(name, events[name]);
@@ -15,4 +15,4 @@ class XTagListeners {
 
 }
 
-export default XTagListeners;
+export default XTagEvents;
