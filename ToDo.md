@@ -9,4 +9,4 @@ events/listeners a la X-Tag
 memoize camelCase/hyphenated name conversions
 override setAttribute to avoid recursively setting property
 template folding
-automatic node finding -- lazy?
+lazy automatic node finding
