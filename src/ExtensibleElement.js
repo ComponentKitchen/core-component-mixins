@@ -4,13 +4,8 @@
 
 import ExtensibleClass from './ExtensibleClass';
 
-class ExtensibleElement extends HTMLElement {}
-
-/*
- * It'd be nice to use ExtensibleClass itself here, but since it doesn't copy
- * over static methods yet, we extend by hand.
- */
-ExtensibleElement.extend = ExtensibleClass.extend;
-ExtensibleElement.prototype.super = ExtensibleClass.prototype.super;
+// We use ExtensibleClass to add its own members to a HTMLElement subclass.
+// The result is an HTMLElement that with .extend() and super() support.
+let ExtensibleElement = ExtensibleClass.extend.call(HTMLElement, ExtensibleClass);
 
 export default ExtensibleElement;

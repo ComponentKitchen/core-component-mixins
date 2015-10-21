@@ -63,9 +63,9 @@ class ExtensibleClass {
 /*
  * Copy the given members to the target.
  */
-function copyMembers(members, target) {
+function copyMembers(members, target, ignoreMembers) {
   Object.getOwnPropertyNames(members).forEach((name) => {
-    if (name !== 'constructor') {
+    if (!ignoreMembers || ignoreMembers.indexOf(name) < 0) {
       let descriptor = Object.getOwnPropertyDescriptor(members, name);
       Object.defineProperty(target, name, descriptor);
     }
@@ -78,12 +78,23 @@ function copyMembers(members, target) {
  * include the members of the indicated extension.
  */
 function extendClass(baseClass, extension) {
+
   class subclass extends baseClass {}
-  let members = getMembersForExtension(extension);
-  copyMembers(members, subclass.prototype);
+
+  if (typeof extension === 'function') {
+    // Extending with a class.
+    // Copy both static and instance methods.
+    copyMembers(extension, subclass, ['length', 'name', 'prototype']);
+    copyMembers(extension.prototype, subclass.prototype, ['constructor']);
+  } else {
+    // Extending with a plain object.
+    copyMembers(extension, subclass.prototype);
+  }
+
   // Remember which extension was used to create this new class so that extended
   // methods can call implementations in the super (base) class.
   extensionForPrototype.set(subclass.prototype, extension);
+
   return subclass;
 }
 
@@ -99,16 +110,6 @@ function getPrototypeImplementingExtension(obj, extension) {
     }
   }
   return null;
-}
-
-/*
- * If the extension is a class (function), return its prototype. Otherwise,
- * return the extension as is.
- */
-function getMembersForExtension(extension) {
-  return typeof extension === 'function' ?
-    extension.prototype :
-    extension;
 }
 
 /*
