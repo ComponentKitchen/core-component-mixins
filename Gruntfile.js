@@ -22,7 +22,7 @@ module.exports = function (grunt) {
       },
       demos: {
         files: {
-          'build/demos.js': 'demos/*.js'
+          'build/demos.js': ['demos/*.js', 'demos/**/*.js']
         }
       },
       test: {
@@ -34,7 +34,7 @@ module.exports = function (grunt) {
 
     watch: {
       scripts: {
-        files: ['demos/*.js', 'src/*.js', 'test/*.js'],
+        files: ['demos/*.js', 'demos/**/*.js', 'src/*.js', 'test/*.js'],
         tasks: ['build']
       }
     }

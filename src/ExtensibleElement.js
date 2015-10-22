@@ -2,7 +2,7 @@
  * An extensible HTML element
  */
 
-import ExtensibleClass from './ExtensibleClass';
+import ExtensibleClass from '../extensible/ExtensibleClass';
 
 // We use ExtensibleClass to add its own members to a HTMLElement subclass.
 // The result is an HTMLElement that with .extend() and super() support.

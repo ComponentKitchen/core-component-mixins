@@ -11,3 +11,5 @@ memoize camelCase/hyphenated name conversions
 override setAttribute to avoid recursively setting property
 template folding
 lazy automatic node finding
+XTag() constructor
+move ExtensibleElement to /src

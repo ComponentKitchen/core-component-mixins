@@ -5,7 +5,7 @@
  * and marshalling between attributes and properties.
  */
 
-import ExtensibleElement from '../extensible/ExtensibleElement';
+import ExtensibleElement from './ExtensibleElement';
 import TemplateStamping from './TemplateStamping';
 import AutomaticNodeFinding from './AutomaticNodeFinding';
 import AttributeMarshalling from './AttributeMarshalling';
