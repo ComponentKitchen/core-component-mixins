@@ -1,10 +1,10 @@
-import ExtensibleClass from "../extensible/ExtensibleClass";
+import Extensible from "../extensible/Extensible";
 
 
 /* Sample classes used by the test suite */
 
 /* A simple base class */
-class ExampleBase extends ExtensibleClass {
+class ExampleBase extends Extensible {
   foo() {
     return 'ExampleBase';
   }
@@ -27,7 +27,7 @@ class MethodExtension {
 }
 
 
-suite("ExtensibleClass", () => {
+suite("Extensible", () => {
 
   test("can extend class with ES6 class syntax", () => {
     class Subclass extends ExampleBase {
@@ -99,7 +99,7 @@ suite("ExtensibleClass", () => {
     let extension = {
       property: 'value'
     };
-    let extended = ExtensibleClass.extend.call(obj, extension);
+    let extended = Extensible.extend.call(obj, extension);
     assert.equal(extended.method(), 'result');
     assert.equal(extended.property, 'value');
   });

@@ -2,10 +2,10 @@
  * An extensible HTML element
  */
 
-import ExtensibleClass from '../extensible/ExtensibleClass';
+import Extensible from '../extensible/Extensible';
 
-// We use ExtensibleClass to add its own members to a HTMLElement subclass.
-// The result is an HTMLElement that with .extend() and super() support.
-let ExtensibleElement = ExtensibleClass.extend.call(HTMLElement, ExtensibleClass);
+// We use Extensible to add its own members to a HTMLElement subclass.
+// The result is an HTMLElement with .extend() and super() support.
+let ExtensibleElement = Extensible.extend.call(HTMLElement, Extensible);
 
 export default ExtensibleElement;

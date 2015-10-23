@@ -1,5 +1,5 @@
 /*
- * A class which can be extended with other classes.
+ * Extend classes/objects with other classes/objects.
  */
 
 
@@ -19,14 +19,14 @@
 let extensionForPrototype = new Map();
 
 
-class ExtensibleClass {
+class Extensible {
 
   /*
    * Call a superclass implementation of a method if it exists.
    *
-   * This walks up the object's class hierarchy in search of the class that
-   * implemented the given extension. Then it goes up one level, and looks up
-   * the hierarchy from that point to see if any superclass implements the
+   * This walks up the object's prototype chain in search of the given
+   * extension. Then it goes up one level, and looks up the hierarchy from that
+   * point to see if any superclass (object higher up the chain) implements the
    * named method. If a superclass method implementation is found, it is invoked
    * with the given arguments, and the result of that is returned.
    */
@@ -61,13 +61,17 @@ class ExtensibleClass {
    *
    *   MyBaseClass.extend(Extension1).extend(Extension2).extend(Extension3)
    *
+   * This method can be statically invoked to extend plain objects:
+   *
+   *   let extended = Extensible.extend.call(obj1, obj2);
+   *
    */
   static extend(...extensions) {
     // We create a new subclass for each extension in turn. The result of
     // becomes the base class extended by any subsequent extensions. It turns
     // out that we can use Array.reduce() to concisely express this, using the
     // current (original) class as the seed for reduce().
-    return extensions.reduce(extendClass, this);
+    return extensions.reduce(extend, this);
   }
 
 }
@@ -87,23 +91,23 @@ function copyMembers(members, target, ignoreMembers) {
 }
 
 /*
- * Return a new subclass of the given baseclass. The new class' prototype will
- * include the members of the indicated extension.
+ * Return a new subclass/object that extends the given base class/object with
+ * the members of the indicated extension.
  */
-function extendClass(baseClass, extension) {
+function extend(base, extension) {
 
   let result;
-  if (typeof baseClass === 'function') {
+  if (typeof base === 'function') {
     // Extending a real class.
-    class subclass extends baseClass {}
+    class subclass extends base {}
     result = subclass;
   } else {
     // Extending a plain object.
     result = {};
-    Object.setPrototypeOf(result, baseClass);
+    Object.setPrototypeOf(result, base);
   }
 
-  let baseIsClass = (typeof baseClass === 'function');
+  let baseIsClass = (typeof base === 'function');
   let extensionIsClass = (typeof extension === 'function');
   if (baseIsClass && extensionIsClass) {
     // Extending a class with a class.
@@ -131,9 +135,8 @@ function extendClass(baseClass, extension) {
 }
 
 /*
- * Return the prototype for the class that implemented the indicated extension
- * for the given object.
- *
+ * Return the prototype for the class/object that implemented the indicated
+ * extension for the given object.
  */
 function getPrototypeImplementingExtension(obj, extension) {
   for (let prototype = obj; prototype !== null; prototype = Object.getPrototypeOf(prototype)) {
@@ -145,7 +148,7 @@ function getPrototypeImplementingExtension(obj, extension) {
 }
 
 /*
- * Return a descriptor for the named property, looking up the class hierarchy.
+ * Return a descriptor for the named property, looking up the prototype chain.
  */
 function getPropertyDescriptor(prototype, name) {
   if (!prototype) {
@@ -160,4 +163,4 @@ function getPropertyDescriptor(prototype, name) {
 }
 
 
-export default ExtensibleClass;
+export default Extensible;
