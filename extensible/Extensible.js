@@ -129,10 +129,10 @@ function extend(base, extension) {
 
   // Give functions on the result a pointer to the corresponding functions on
   // their new base class.
-  addSuperReferences(result, base);
-  if (baseIsClass && extensionIsClass) {
-    addSuperReferences(result.prototype, base.prototype);
-  }
+  // addSuperReferences(result, base);
+  // if (baseIsClass && extensionIsClass) {
+  //   addSuperReferences(result.prototype, base.prototype);
+  // }
 
   // Remember which extension was used to create this new class so that extended
   // methods can call implementations in the super (base) class.
@@ -141,17 +141,17 @@ function extend(base, extension) {
   return result;
 }
 
-function addSuperReferences(target, base) {
-  // TODO: Handle properties.
-  Object.getOwnPropertyNames(target).forEach(name => {
-    let targetDescriptor = Object.getOwnPropertyDescriptor(target, name);
-    let baseDescriptor = Object.getOwnPropertyDescriptor(base, name);
-    if (typeof targetDescriptor.value === 'function' &&
-        baseDescriptor && typeof baseDescriptor.value === 'function') {
-      targetDescriptor.value.super = baseDescriptor.value;
-    }
-  });
-}
+// function addSuperReferences(target, base) {
+//   // TODO: Handle properties.
+//   Object.getOwnPropertyNames(target).forEach(name => {
+//     let targetDescriptor = Object.getOwnPropertyDescriptor(target, name);
+//     let baseDescriptor = Object.getOwnPropertyDescriptor(base, name);
+//     if (typeof targetDescriptor.value === 'function' &&
+//         baseDescriptor && typeof baseDescriptor.value === 'function') {
+//       targetDescriptor.value.super = baseDescriptor.value;
+//     }
+//   });
+// }
 
 /*
  * Return the prototype for the class/object that implemented the indicated
