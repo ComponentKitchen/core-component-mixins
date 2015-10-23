@@ -90,4 +90,18 @@ suite("ExtensibleClass", () => {
     assert(instance.extensionMethodInvoked);
   });
 
+  test("can extend a plain object", () => {
+    let obj = {
+      method() {
+        return 'result';
+      }
+    };
+    let extension = {
+      property: 'value'
+    };
+    let extended = ExtensibleClass.extend.call(obj, extension);
+    assert.equal(extended.method(), 'result');
+    assert.equal(extended.property, 'value');
+  });
+
 });

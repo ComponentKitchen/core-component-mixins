@@ -77,7 +77,7 @@ class ExtensibleClass {
  * Copy the given members to the target.
  */
 function copyMembers(members, target, ignoreMembers) {
-  Object.getOwnPropertyNames(members).forEach((name) => {
+  Object.getOwnPropertyNames(members).forEach(name => {
     if (!ignoreMembers || ignoreMembers.indexOf(name) < 0) {
       let descriptor = Object.getOwnPropertyDescriptor(members, name);
       Object.defineProperty(target, name, descriptor);
@@ -92,23 +92,42 @@ function copyMembers(members, target, ignoreMembers) {
  */
 function extendClass(baseClass, extension) {
 
-  class subclass extends baseClass {}
-
-  if (typeof extension === 'function') {
-    // Extending with a class.
-    // Copy both static and instance methods.
-    copyMembers(extension, subclass, Object.getOwnPropertyNames(Function));
-    copyMembers(extension.prototype, subclass.prototype, ['constructor']);
+  let result;
+  if (typeof baseClass === 'function') {
+    // Extending a real class.
+    class subclass extends baseClass {}
+    result = subclass;
   } else {
-    // Extending with a plain object.
-    copyMembers(extension, subclass.prototype);
+    // Extending a plain object.
+    result = {};
+    Object.setPrototypeOf(result, baseClass);
+  }
+
+  let baseIsClass = (typeof baseClass === 'function');
+  let extensionIsClass = (typeof extension === 'function');
+  if (baseIsClass && extensionIsClass) {
+    // Extending a class with a class.
+    // Copy both static and instance methods.
+    copyMembers(extension, result, Object.getOwnPropertyNames(Function));
+    copyMembers(extension.prototype, result.prototype, ['constructor']);
+  } else if (!baseIsClass && extensionIsClass) {
+    // Extending a plain object with a class.
+    // Copy prototype methods directly to result.
+    copyMembers(extension.prototype, result, ['constructor']);
+  } else if (baseIsClass && !extensionIsClass) {
+    // Extending class with plain object.
+    // Copy extension to result prototype.
+    copyMembers(extension, result.prototype);
+  } else {
+    // Extending a plain object with a plain object.
+    copyMembers(extension, result);
   }
 
   // Remember which extension was used to create this new class so that extended
   // methods can call implementations in the super (base) class.
-  extensionForPrototype.set(subclass.prototype, extension);
+  extensionForPrototype.set(result.prototype, extension);
 
-  return subclass;
+  return result;
 }
 
 /*

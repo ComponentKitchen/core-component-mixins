@@ -1,4 +1,4 @@
-ExtensibleClass unit tests don't depend on elements
+extendClass.call() can extend a plain object
 extendClass can try:
   let subclass = function() {};
   subclass.prototype = Object.create(baseClass.prototype, members);

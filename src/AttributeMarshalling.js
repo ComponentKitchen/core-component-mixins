@@ -24,7 +24,7 @@ class AttributeMarshalling {
 
   createdCallback() {
     this.super(AttributeMarshalling, 'createdCallback');
-    [].forEach.call(this.attributes, (attribute) => {
+    [].forEach.call(this.attributes, attribute => {
       this.attributeChangedCallback(attribute.name, undefined, attribute.value);
     });
   }
@@ -34,7 +34,7 @@ class AttributeMarshalling {
 
 // Convert camel case fooBar name to hyphenated foo-bar.
 function attributeToPropertyName(attributeName) {
-  let propertyName = attributeName.replace(/-([a-z])/g, (m) => m[1].toUpperCase());
+  let propertyName = attributeName.replace(/-([a-z])/g, m => m[1].toUpperCase());
   return propertyName;
 }
 
@@ -50,7 +50,7 @@ function hasProperty(obj, name) {
 
 // Convert hyphenated foo-bar name to camel case fooBar.
 function propertyToAttributeName(propertyName) {
-  let attributeName = propertyName.replace(/([a-z][A-Z])/g, (g) => g[0] + '-' + g[1].toLowerCase());
+  let attributeName = propertyName.replace(/([a-z][A-Z])/g, g => g[0] + '-' + g[1].toLowerCase());
   return attributeName;
 }
 
