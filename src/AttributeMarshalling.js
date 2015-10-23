@@ -8,7 +8,10 @@ class AttributeMarshalling {
    * Handle a change to the attribute with the given name.
    */
   attributeChangedCallback(name, oldValue, newValue) {
-    this.super(AttributeMarshalling, 'attributeChangedCallback');
+    let base = this.super(AttributeMarshalling).attributeChangedCallback;
+    if (base) {
+      base.call(this);
+    }
     // this.log(`attribute ${name} changed to ${newValue}`);
     // If the attribute name corresponds to a property name, then set that
     // property.
@@ -23,7 +26,10 @@ class AttributeMarshalling {
   }
 
   createdCallback() {
-    this.super(AttributeMarshalling, 'createdCallback');
+    let base = this.super(AttributeMarshalling).createdCallback;
+    if (base) {
+      base.call(this);
+    }
     [].forEach.call(this.attributes, attribute => {
       this.attributeChangedCallback(attribute.name, undefined, attribute.value);
     });

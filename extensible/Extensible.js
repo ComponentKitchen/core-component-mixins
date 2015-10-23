@@ -22,25 +22,19 @@ let extensionForPrototype = new Map();
 class Extensible {
 
   /*
-   * Call a superclass implementation of a method if it exists.
+   * Return the prototype in the prototype chain that's above the one that
+   * implemented the given extension.
    *
-   * This walks up the object's prototype chain in search of the given
-   * extension. Then it goes up one level, and looks up the hierarchy from that
-   * point to see if any superclass (object higher up the chain) implements the
-   * named method. If a superclass method implementation is found, it is invoked
-   * with the given arguments, and the result of that is returned.
+   * This is used in ES5-compatible extensions to invoke base property/method
+   * implementations, regardless of where the extension ended up in the
+   * prototype chain. This can be used by ES5 extensions or transpiled
+   * ES6-to-ES5 extensions. Pure ES6 extensions can make simple use of the
+   * "super" keyword instead, but that won't work in transpiled ES6-to-ES5
+   * (e.g., via Babel).
    */
-  super(extension, name, ...args) {
+  super(extension) {
     let prototype = getPrototypeImplementingExtension(this, extension);
-    if (prototype) {
-      let superProto = Object.getPrototypeOf(prototype);
-      if (superProto) {
-        let descriptor = getPropertyDescriptor(superProto, name);
-        if (descriptor && typeof descriptor.value === 'function') {
-          return descriptor.value.apply(this, args);
-        }
-      }
-    }
+    return prototype && Object.getPrototypeOf(prototype);
   }
 
   /*
@@ -127,31 +121,12 @@ function extend(base, extension) {
     copyMembers(extension, result);
   }
 
-  // Give functions on the result a pointer to the corresponding functions on
-  // their new base class.
-  // addSuperReferences(result, base);
-  // if (baseIsClass && extensionIsClass) {
-  //   addSuperReferences(result.prototype, base.prototype);
-  // }
-
   // Remember which extension was used to create this new class so that extended
   // methods can call implementations in the super (base) class.
   extensionForPrototype.set(result.prototype, extension);
 
   return result;
 }
-
-// function addSuperReferences(target, base) {
-//   // TODO: Handle properties.
-//   Object.getOwnPropertyNames(target).forEach(name => {
-//     let targetDescriptor = Object.getOwnPropertyDescriptor(target, name);
-//     let baseDescriptor = Object.getOwnPropertyDescriptor(base, name);
-//     if (typeof targetDescriptor.value === 'function' &&
-//         baseDescriptor && typeof baseDescriptor.value === 'function') {
-//       targetDescriptor.value.super = baseDescriptor.value;
-//     }
-//   });
-// }
 
 /*
  * Return the prototype for the class/object that implemented the indicated

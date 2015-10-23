@@ -4,7 +4,6 @@ extendClass can try:
   subclass.prototype = Object.create(baseClass.prototype, members);
   subclass.prototype.constructor = subclass;
 cache super prototype lookups
-  let result = this.super(MethodExtension).method()
 .extend(args) introduces as few classes as possible?
 extensions can inherit -- need to get all properties
 memoize camelCase/hyphenated name conversions

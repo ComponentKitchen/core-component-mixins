@@ -10,7 +10,10 @@ class XTagExtensions {
    * a JavaScript dictionary called "events" that maps event names to handlers.
    */
   createdCallback() {
-    this.super(XTagExtensions, 'createdCallback');
+    let base = this.super(XTagExtensions).createdCallback;
+    if (base) {
+      base.call(this);
+    }
     let events = this.events || [];
     for (let name in events) {
       this.addEventListener(name, events[name]);

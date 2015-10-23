@@ -14,7 +14,10 @@ class TemplateStamping {
    */
   createdCallback() {
     // this.log("created");
-    this.super(TemplateStamping, 'createdCallback');
+    let base = this.super(TemplateStamping).createdCallback;
+    if (base) {
+      base();
+    }
     let template = this.template;
     if (typeof template === 'string') {
       // Upgrade plain string to real template.

@@ -376,7 +376,7 @@ Invoking base method implementations
 
     class Encouraging {
       do() {
-        this.super(Encouraging, 'do');
+        this.super(Encouraging).do.call(this);
         console.log("Good job!");
       }
     }
