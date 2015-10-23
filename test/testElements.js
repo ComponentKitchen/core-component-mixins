@@ -46,37 +46,6 @@ class ElementWithCamelCaseProperty extends ElementBase {
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
 
 
-/* Element extension that defines a property. */
-class PropertyExtension {
-  get property() {
-    return 'value';
-  }
-}
-class ElementWithPropertyExtension extends ElementBase {}
-ElementWithPropertyExtension = ElementWithPropertyExtension.extend(PropertyExtension);
-document.registerElement('element-with-property-extension', ElementWithPropertyExtension);
-
-
-/* Extension that defines a method. */
-class MethodExtension {
-  method() {
-    let result = this.super(MethodExtension, 'method');
-    this.extensionMethodInvoked = true;
-    return result;
-  }
-}
-class ElementWithMethodExtension extends ElementBase {
-  method() {
-    this.componentMethodInvoked = true;
-    return 'component result';
-  }
-}
-ElementWithMethodExtension = ElementWithMethodExtension.extend(MethodExtension);
-window.ElementWithMethodExtension = ElementWithMethodExtension;
-window.MethodExtension = MethodExtension;
-document.registerElement('element-with-method-extension', ElementWithMethodExtension);
-
-
 /* Extension that defines a createdCallback method. */
 class CreatedExtension {
   createdCallback() {
@@ -91,13 +60,3 @@ class ElementWithCreatedExtension extends ElementBase {
 }
 ElementWithCreatedExtension = ElementWithCreatedExtension.extend(CreatedExtension);
 document.registerElement('element-with-created-extension', ElementWithCreatedExtension);
-
-
-/* A component using multiple extensions. */
-class ElementWithMultipleExtensions extends ElementBase {}
-ElementWithMultipleExtensions = ElementWithMultipleExtensions.extend(
-  PropertyExtension,
-  MethodExtension,
-  CreatedExtension
-);
-document.registerElement('element-with-multiple-extensions', ElementWithMultipleExtensions);

@@ -28,31 +28,10 @@ suite("ElementBase", () => {
     assert.equal(element.customProperty, "Hello");
   });
 
-  test("component can use extension to define a property", () => {
-    let element = document.createElement('element-with-property-extension');
-    assert.equal(element.property, 'value');
-  });
-
-  test("extension method invokes both extension's and component's implementation", () => {
-    let element = document.createElement('element-with-method-extension');
-    let result = element.method();
-    assert.equal(result, 'component result');
-    assert(element.extensionMethodInvoked);
-    assert(element.componentMethodInvoked);
-  });
-
   test("extension can define createdCallback", () => {
     let element = document.createElement('element-with-created-extension');
     assert(element.extensionCreatedCallbackInvoked);
     assert.equal(element.shadowRoot.textContent.trim(), "Hello");
-  });
-
-  test("component can have multiple extensions", () => {
-    let element = document.createElement('element-with-multiple-extensions');
-    assert(element.extensionCreatedCallbackInvoked);
-    assert.equal(element.property, 'value');
-    element.method();
-    assert(element.extensionMethodInvoked);
   });
 
 });
