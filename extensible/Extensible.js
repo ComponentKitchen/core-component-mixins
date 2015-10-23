@@ -14,7 +14,7 @@
  * whose constructor is *not* the function passed to document.registerElement().
  * That is, element classes have a special munged constructor, and that
  * constructor can't get included in our map. We use prototypes instead, which
- * are left along by document.registerElement().
+ * are left alone by document.registerElement().
  */
 let extensionForPrototype = new Map();
 
@@ -127,11 +127,30 @@ function extend(base, extension) {
     copyMembers(extension, result);
   }
 
+  // Give functions on the result a pointer to the corresponding functions on
+  // their new base class.
+  addSuperReferences(result, base);
+  if (baseIsClass && extensionIsClass) {
+    addSuperReferences(result.prototype, base.prototype);
+  }
+
   // Remember which extension was used to create this new class so that extended
   // methods can call implementations in the super (base) class.
   extensionForPrototype.set(result.prototype, extension);
 
   return result;
+}
+
+function addSuperReferences(target, base) {
+  // TODO: Handle properties.
+  Object.getOwnPropertyNames(target).forEach(name => {
+    let targetDescriptor = Object.getOwnPropertyDescriptor(target, name);
+    let baseDescriptor = Object.getOwnPropertyDescriptor(base, name);
+    if (typeof targetDescriptor.value === 'function' &&
+        baseDescriptor && typeof baseDescriptor.value === 'function') {
+      targetDescriptor.value.super = baseDescriptor.value;
+    }
+  });
 }
 
 /*

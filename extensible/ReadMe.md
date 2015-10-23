@@ -86,16 +86,19 @@ methods of the same name.
 A common and simple solution to resolving name conflicts is "last writer wins".
 Generally this is interpreted to mean that mixin methods overwrite methods on
 the target, and that mixins are applied in the order they are specified.
-Following this "last writer wins" approach, in the above case we have
+Following this "last writer wins" approach, in the above case we *probably*
+get this result:
 
     instance.foo() // "mixin2"
 
-because mixin2 was specified last, and hence wins the conflict.
+because mixin2 was specified last, and hence wins the conflict. However,
+the exact behavior may vary from framework to framework.
 
-However, "last writer wins" may not meet all needs. In many frameworks, it's
-desirable to let mixins *augment* behavior, not overrule it. These frameworks
-resolve name conflicts by invoking all method implementations on the base class
-and any mixins applied to it:
+Moreover, there are cases where "last writer wins" is not desirable. In many
+situations, it's desirable to let mixins *augment* behavior, not overrule it.
+Frameworks that want to address these situations resolve name conflicts by
+invoking *all* method implementations on the base class and any mixins applied
+to it:
 
     let mixin1 = {
       foo() { console.log("mixin1"); }
@@ -114,10 +117,10 @@ and any mixins applied to it:
 Again, the idiosyncratic nature of mixin implementations means we can't
 reason about aggregate behavior without knowing more about FrameworkDuJour.
 Some frameworks will invoke Base.foo() first, then the mixin foo()
-implementations; other frameworks will invoke mixins first, then the Base
-implementation. Most frameworks will invoke mixin1.foo() before mixin2.foo(),
-because that was the order in which the mixins were specified, but again that's
-arbitrary and not guaranteed to be consistent across frameworks.
+implementations. Other frameworks will do the opposite: invoke mixins first,
+then the Base implementation. Most frameworks will invoke mixin1.foo() before
+mixin2.foo(), because they were specified in that order, but again that behavior
+isn't guaranteed to be consistent across frameworks.
 
 *** Links to these? ***
 http://raganwald.com/2015/06/17/functional-mixins.html
@@ -127,9 +130,24 @@ http://raganwald.com/2015/06/20/purely-functional-composition.html
 JavaScript already has an extension mechanism: the prototype chain
 ==================================================================
 
-Instead of mixing mixin1 and mixin2 into the Base class, we can just edit the
-prototype chain and redefine Base to point to the start of the chain. A
-brute-force approach:
+It's worth noting that JavaScript already provides a native means of aggregating
+behavior through the language's prototype chain. The chain is a linked list of
+object prototypes. If multiple prototypes on the chain implement a method of the
+same name, the order of the linked list provides a very specific means of
+disambiguating name conflicts: the first prototype in the chain that implements
+the method wins.
+
+This is a language feature, and its behavior is definitively unambiguous. All
+JavaScript implementations treat the prototype chain exactly the same. To many
+people, in fact, the prototypal nature of JavaScript is the language's
+defining characteristic.
+
+We can use the prototype chain as the basis for a mixin solution whose
+conflict resolution strategy is both clearly defined and flexible. Instead of
+copying mixin members into a target base class prototype, we can just extend
+the prototype chain to include those mixins.
+
+A very brute-force approach, which destructively modifies the mixins:
 
     let mixin1 = {
       foo() { return "mixin1"; }
@@ -141,53 +159,49 @@ brute-force approach:
       foo() { return "Base"; }
     }
 
-    Object.setPrototypeOf(mixin1, mixin2);
-    Object.setPrototypeOf(mixin2, Base.prototype);
-    let ExtendedBase = mixin1;
+    Object.setPrototypeOf(mixin1, Base.prototype);
+    Object.setPrototypeOf(mixin2, mixin1);
+    let ExtendedBase = mixin2;
     let obj = new ExtendedBase();
 
-This creates a prototype chain:
+    obj.foo() // returns "mixin2"
 
-    obj --> ExtendedBase (mixin1) --> mixin2 --> Base --> Object
+We've created a prototype chain:
 
-We can interrogate our new instance:
+    obj --> ExtendedBase (mixin2) --> mixin1 --> Base --> Object
 
-    obj instanceof ExtendedBase // true
-    obj instanceof Base // true
-
-Now when we can definitively answer the question of which method will get
-invoked:
-
-    obj.foo() // returns "mixin1"
-
-We know this will invoke mixin1's foo() implementation, because that's exactly
-what the prototype chain specifies. That's what the prototype chain is *there
-for*: to allow the compartmentalization of functionality while providing a
-definitive means of disambiguating function calls.
+We know definitively that it's mixin2's implementation of foo() which will be
+invoked, because that's exactly what the prototype chain specifies. That's what
+the prototype chain is *there for*: to compartmentalize functionality while
+providing a definitive means of disambiguating function calls.
 
 If we want, we can even redefine the Base class to reference our new, extended
 version of the class that includes the behavior supplied by the mixins. (This
 assumes we haven't created any class instances yet.)
 
-    Object.setPrototypeOf(mixin1, mixin2);
-    Object.setPrototypeOf(mixin2, Base.prototype);
-    Base = mixin1; // redefine Base
+    Object.setPrototypeOf(mixin1, Base.prototype);
+    Object.setPrototypeOf(mixin2, mixin1);
+    Base = mixin2; // redefine Base
     let obj = new Base();
 
 The prototype chain is the same, it's just that name "Base" points to a
 different point in the chain:
 
-    obj --> Base (mixin1) --> mixin2 --> (unnamed) --> Object
+    obj --> Base (mixin2) --> mixin1 --> (unnamed) --> Object
 
-If we want to avoid destructively modifying mixin1 and mixin2, so we can use
-them in other prototype chains, we can copy them before changing their
-prototypes:
+The brute-force destructive modification of the mixins here prevents their
+incorporation into other prototype chains. To avoid this problem, we can copy
+them before changing their prototypes:
 
     let copy1 = Object.assign(mixin1, {});
     let copy2 = Object.assign(mixin2, {});
-    Object.setPrototypeOf(copy1, copy2);
-    Object.setPrototypeOf(copy2, Base.prototype);
+    Object.setPrototypeOf(copy1, Base.prototype);
+    Object.setPrototypeOf(copy2, copy1);
     Base = copy1;
+
+Now we have:
+
+    obj --> Base (mixin2 copy) --> (mixin1 copy) --> (unnamed) --> Object
 
 Using the prototype chain is not necessarily less efficient than some
 proprietary mixin strategy. In fact, there's every reason to trust that
@@ -205,6 +219,9 @@ language*. That means:
 * The prototype chain will be directly supported in JavaScript forever, even as
   the language evolves. E.g., ES6 classes codify a convention for manipulating
   the prototype chain.
+
+Chaining together prototypes is naturally less memory-efficient than
+destructively copying the mixin methods to the prototype of the base class.
 
 
 Composition vs inheritance

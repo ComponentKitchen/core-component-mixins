@@ -20,7 +20,8 @@ class PropertyExtension {
 /* Extension that defines a method */
 class MethodExtension {
   method() {
-    let result = this.super(MethodExtension, 'method') || 'extension result';
+    let result = method.super() || 'extension result';
+    // let result = this.super(MethodExtension, 'method') || 'extension result';
     this.extensionMethodInvoked = true;
     return result;
   }
