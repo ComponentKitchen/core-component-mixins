@@ -1,5 +1,9 @@
-ExtensibleClass
-===============
+Extensible
+==========
+
+The module Extensible.js implements a class called Extensible that provides a
+general-purpose means of extending class and object behavior along the lines of
+mixins, but leveraging the JavaScript prototype chain for method disambiguation.
 
 Trying to implement a mixin solution that:
 
@@ -26,20 +30,19 @@ Polymer behaviors
 Let's consider the use of mixins in a hypothetical JavaScript framework called
 FrameworkDuJour:
 
-  let Mixin1 = {
-    foo() { return "Mixin1"; }
-  };
-  let Mixin2 = {
-    foo() { return "Mixin2"; }
-  }
-  let Base = FrameworkDuJour.classFactory({
-    foo() { return "Base"; }
-    mixins: [Mixin1, Mixin2]
-  });
+    let Mixin1 = {
+      foo() { return "Mixin1"; }
+    };
+    let Mixin2 = {
+      foo() { return "Mixin2"; }
+    }
+    let Base = FrameworkDuJour.classFactory({
+      foo() { return "Base"; }
+      mixins: [Mixin1, Mixin2]
+    });
 
-  let instance = new Base();
-  instance.foo() // What does this return?
-
+    let instance = new Base();
+    instance.foo() // What does this return?
 
 http://raganwald.com/2015/06/17/functional-mixins.html
 http://raganwald.com/2015/06/20/purely-functional-composition.html
@@ -64,34 +67,34 @@ Instead of mixing Mixin1 and Mixin2 into the Base class, we can just edit the
 prototype chain and redefine Base to point to the start of the chain. A
 brute-force approach:
 
-  let Mixin1 = {
-    foo() { return "Mixin1"; }
-  };
-  let Mixin2 = {
-    foo() { return "Mixin2"; }
-  }
-  class Base {
-    foo() { return "Base"; }
-  }
+    let Mixin1 = {
+      foo() { return "Mixin1"; }
+    };
+    let Mixin2 = {
+      foo() { return "Mixin2"; }
+    }
+    class Base {
+      foo() { return "Base"; }
+    }
 
-  Object.setPrototypeOf(Mixin1, Mixin2);
-  Object.setPrototypeOf(Mixin2, Base.prototype);
-  let ExtendedBase = Mixin1;
-  let obj = new ExtendedBase();
+    Object.setPrototypeOf(Mixin1, Mixin2);
+    Object.setPrototypeOf(Mixin2, Base.prototype);
+    let ExtendedBase = Mixin1;
+    let obj = new ExtendedBase();
 
 This creates a prototype chain:
 
-  obj --> ExtendedBase (Mixin1) --> Mixin2 --> Base --> Object
+    obj --> ExtendedBase (Mixin1) --> Mixin2 --> Base --> Object
 
 We can interrogate our new instance:
 
-  obj instanceof ExtendedBase // true
-  obj instanceof Base // true
+    obj instanceof ExtendedBase // true
+    obj instanceof Base // true
 
 Now when we can definitively answer the question of which method will get
 invoked:
 
-  obj.foo() // returns "Mixin1"
+    obj.foo() // returns "Mixin1"
 
 We know this will invoke Mixin1's foo() implementation, because that's exactly
 what the prototype chain specifies. That's what the prototype chain is *there
@@ -102,25 +105,25 @@ If we want, we can even redefine the Base class to reference our new, extended
 version of the class that includes the behavior supplied by the mixins. (This
 assumes we haven't created any class instances yet.)
 
-  Object.setPrototypeOf(Mixin1, Mixin2);
-  Object.setPrototypeOf(Mixin2, Base.prototype);
-  Base = Mixin1; // redefine Base
-  let obj = new Base();
+    Object.setPrototypeOf(Mixin1, Mixin2);
+    Object.setPrototypeOf(Mixin2, Base.prototype);
+    Base = Mixin1; // redefine Base
+    let obj = new Base();
 
 The prototype chain is the same, it's just that name "Base" points to a
 different point in the chain:
 
-  obj --> Base (Mixin1) --> Mixin2 --> (unnamed) --> Object
+    obj --> Base (Mixin1) --> Mixin2 --> (unnamed) --> Object
 
 If we want to avoid destructively modifying Mixin1 and Mixin2, so we can use
 them in other prototype chains, we can copy them before changing their
 prototypes:
 
-  let copy1 = Object.assign(Mixin1, {});
-  let copy2 = Object.assign(Mixin2, {});
-  Object.setPrototypeOf(copy1, copy2);
-  Object.setPrototypeOf(copy2, Base.prototype);
-  Base = copy1;
+    let copy1 = Object.assign(Mixin1, {});
+    let copy2 = Object.assign(Mixin2, {});
+    Object.setPrototypeOf(copy1, copy2);
+    Object.setPrototypeOf(copy2, Base.prototype);
+    Base = copy1;
 
 Using the prototype chain is not necessarily less efficient than some
 proprietary mixin strategy. In fact, there's every reason to trust that
@@ -154,21 +157,21 @@ inheritance. Because we work with *copies* of classes/prototypes, we're
 
 Consider three mixins and a base class:
 
-  let Mixin1 = {};
-  let Mixin2 = {};
-  let Mixin3 = {};
-  class Base {}
+    let Mixin1 = {};
+    let Mixin2 = {};
+    let Mixin3 = {};
+    class Base {}
 
 We can compose combinations of those:
 
-  /// fix
-  let copy1 = Object.assign(Mixin1, {});
-  let copyA = Object.assign(MixinA, {});
-  let Class1A = Object.setPrototypeOf(copy1, copyA);
+    /// fix
+    let copy1 = Object.assign(Mixin1, {});
+    let copyA = Object.assign(MixinA, {});
+    let Class1A = Object.setPrototypeOf(copy1, copyA);
 
-  let copy2 = Object.assign(Mixin1, {});
-  let copyB = Object.assign(MixinA, {});
-  let Class1A = Object.setPrototypeOf(copy1, copyA);
+    let copy2 = Object.assign(Mixin1, {});
+    let copyB = Object.assign(MixinA, {});
+    let Class1A = Object.setPrototypeOf(copy1, copyA);
 
 Here we end up with two classes that each of three of the mixins.
 
@@ -176,52 +179,52 @@ Here we end up with two classes that each of three of the mixins.
 Extending classes with classes
 ==============================
 
-  class Todo {
-    constructor (description) {
-      this.description = description || 'Untitled';
-      this.done = false;
+    class Todo {
+      constructor (description) {
+        this.description = description || 'Untitled';
+        this.done = false;
+      }
+      do() {
+        this.done = true;
+      }
+      undo() {
+        this.done = false;
+      }
     }
-    do() {
-      this.done = true;
-    }
-    undo() {
-      this.done = false;
-    }
-  }
 
-  class Numbered {
-    get number() {
-      return this._number;
+    class Numbered {
+      get number() {
+        return this._number;
+      }
+      set number(value) {
+        this._number = value;
+      }
     }
-    set number(value) {
-      this._number = value;
-    }
-  }
 
-  let Bug = ExtensibleClass.extend.call(Todo, Numbered);
-  let bug = new Bug("Nothing works");
-  bug.number = 1; // From Numbered
-  bug.do();       // From ToDo
+    let Bug = ExtensibleClass.extend.call(Todo, Numbered);
+    let bug = new Bug("Nothing works");
+    bug.number = 1; // From Numbered
+    bug.do();       // From ToDo
 
 
 The prototype chain here is
 
-  Bug -> ToDo -> Object
+    Bug -> ToDo -> Object
 
 Where Bug has all the members of Numbered.
 
 We could also define Numbered as a plain object:
 
-  let Numbered = {
-    get number() {
-      return this._number;
+    let Numbered = {
+      get number() {
+        return this._number;
+      }
+      set number(value) {
+        this._number = value;
+      }
     }
-    set number(value) {
-      this._number = value;
-    }
-  }
 
-  let Bug = ExtensibleClass.extend.call(Todo, Numbered);
+    let Bug = ExtensibleClass.extend.call(Todo, Numbered);
 
 There are some advantages of using a class, however:
 
@@ -238,21 +241,21 @@ Classes meant to be extended
 
 Can invoke ExtensibleClass.extend(), as shown above:
 
-  let Bug = ExtensibleClass.extend.call(ToDo, Numbered);
+    let Bug = ExtensibleClass.extend.call(ToDo, Numbered);
 
 If you expect your class to be extended, you can endow it with self-extending
 abilities by inheriting from ExtensibleClass:
 
-  class ToDo extends ExtensibleClass {}
-  class Numbered {}
-  let Bug = ToDo.extend(Numbered);
+    class ToDo extends ExtensibleClass {}
+    class Numbered {}
+    let Bug = ToDo.extend(Numbered);
 
 ExtensibleClass is itself an extension that can be applied to other classes
 to make them extensible:
 
-  class ToDo {}
-  let ExtensibleToDo = ExtensibleClass.extend.call(ToDo, ExtensibleClass);
-  let Bug = ExtensibleToDo.extend(Numbered);
+    class ToDo {}
+    let ExtensibleToDo = ExtensibleClass.extend.call(ToDo, ExtensibleClass);
+    let Bug = ExtensibleToDo.extend(Numbered);
 
 Classes created by extending ExtensibleClass inherit the ability to be extended
 themselves.
@@ -265,9 +268,9 @@ If your intention is to permanently alter a class, you can redefine it to
 reference the extended class. E.g., if we wanted to make all ToDo instances
 have a number, we could do:
 
-  class ToDo extends ExtensibleClass {...}
-  class Numbered {...}
-  let ToDo = ToDo.extend(Numbered);
+    class ToDo extends ExtensibleClass {...}
+    class Numbered {...}
+    let ToDo = ToDo.extend(Numbered);
 
 This will only affect new ToDo instances. It will not retroactively change
 the behavior of existing ToDo instances. Typically, you'd only want to redefine
@@ -277,30 +280,29 @@ a class like this early, before creating any instances.
 Invoking base method implementations
 ====================================
 
-  class Todo {
-    constructor (description) {
-      this.description = description || 'Untitled';
-      this.done = false;
+    class Todo {
+      constructor (description) {
+        this.description = description || 'Untitled';
+        this.done = false;
+      }
+      do() {
+        this.done = true;
+      }
+      undo() {
+        this.done = false;
+      }
     }
-    do() {
-      this.done = true;
-    }
-    undo() {
-      this.done = false;
-    }
-  }
 
-  class Encouraging {
-    do() {
-      this.super(Encouraging, 'do');
-      console.log("Good job!");
+    class Encouraging {
+      do() {
+        this.super(Encouraging, 'do');
+        console.log("Good job!");
+      }
     }
-  }
 
-  let Bug = ExtensibleClass.extend.call(Todo, Encouraging);
-  let bug = new Bug("Nothing works");
-  bug.do();       // Sets done to true, then writes "Good job!" to console.
-
+    let Bug = ExtensibleClass.extend.call(Todo, Encouraging);
+    let bug = new Bug("Nothing works");
+    bug.do();       // Sets done to true, then writes "Good job!" to console.
 
 The `super` method takes as its first argument a reference to the class
 implementing the method being overridden. The second argument is the name of the
