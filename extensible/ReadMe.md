@@ -1,9 +1,10 @@
-Extensible
-==========
+Introduction
+============
 
 The module Extensible.js implements a class called Extensible that provides a
 general-purpose means of extending class and object behavior along the lines of
 mixins, but leveraging the JavaScript prototype chain for method disambiguation.
+
 
 Goals:
 
@@ -16,12 +17,36 @@ multiple mixins/classes define a method with the same name, there should be a
 predictable way of invoking all of them in a well-known order.
 
 
+Example
+-------
+A typical example using this Extensible system in ES6 might look like:
+
+    class Mixin {
+      foo() {
+        return this.bar() + ", world.";
+      }
+    }
+    class Base extends Extensible {
+      bar() {
+        return "Hello";
+      }
+    }
+    Base = Base.extend(Mixin);
+
+    let instance = new Base();
+    instance.foo() // "Hello, world."
+
+The remainder of this document walks through the motivation for this system
+and explores typical usage.
+
+
 Mixins
 ======
 
-Many, many JavaScript frameworks have class factories that support mixins.
-Some rely exclusively on mixins to define behavior, eschewing anything that
-looks like classes, while others use mixins to augment class creation.
+Many JavaScript frameworks have class factories that support mixins. Some rely
+exclusively on mixins to define behavior, eschewing anything that looks like
+traditional single-inheritance classes, while others use mixins to augment class
+creation.
 
 While implementations vary, mixins are generally defined in JavaScript as
 objects supplied to a factory method, e.g., one that creates classes.
@@ -29,14 +54,14 @@ Let's consider the use of mixins in a hypothetical JavaScript framework called
 FrameworkDuJour:
 
     let mixin = {
-      foo() { return "mixin"; }
+      foo: "mixin"
     };
     let Base = FrameworkDuJour.classFactory({
       mixins: [mixin]
     });
 
     let instance = new Base();
-    instance.foo() // "Mixin"
+    instance.foo // "mixin"
 
 Typically, the classFactory() method copies the members of the mixin to the
 prototype of the class being created. This makes the mixin's members available
@@ -62,8 +87,7 @@ with Base, or how Base objects will behave.
 
 
 Mixin conflict resolution
-=========================
-
+-------------------------
 A critical question is how to resolve conflicts in the names of mixin members.
 E.g., a mixin may declare a method of the same name as the target class whose
 prototype is being modified, or multiple mixins applied to a target may share
@@ -95,7 +119,7 @@ because mixin2 was specified last, and hence wins the conflict. However,
 the exact behavior may vary from framework to framework.
 
 Moreover, there are cases where "last writer wins" is not desirable. In many
-situations, it's desirable to let mixins *augment* behavior, not overrule it.
+situations, it's desirable to let mixins *augment* behavior, not override it.
 Frameworks that want to address these situations resolve name conflicts by
 invoking *all* method implementations on the base class and any mixins applied
 to it:
@@ -164,7 +188,7 @@ A very brute-force approach, which destructively modifies the mixins:
     let ExtendedBase = mixin2;
     let obj = new ExtendedBase();
 
-    obj.foo() // returns "mixin2"
+    obj.foo(); // "mixin2"
 
 We've created a prototype chain:
 
@@ -220,8 +244,231 @@ language*. That means:
   the language evolves. E.g., ES6 classes codify a convention for manipulating
   the prototype chain.
 
-Chaining together prototypes is naturally less memory-efficient than
+Chaining together prototypes is admittedly less memory-efficient than
 destructively copying the mixin methods to the prototype of the base class.
+In exchange, this approach of adding mixins to the prototype chain enables
+compelling scenarios for aggregating behavior.
+
+
+The Extensible class
+====================
+
+The Extensible class embodies the prototype chain approach to mixins in a
+class that can be used either as a helper, or as a base class for creating
+extensible classes.
+
+
+Extending any class with a mixin object
+---------------------------------------
+In its simplest form, we can use the Extensible class' `extend()` method to
+extend a class in exactly the way described above:
+
+    let mixin = {
+      foo() { return "mixin"; }
+    };
+    class Base {
+      foo() { return "Base"; }
+    }
+    Base = Extensible.extend.call(Base, mixin);
+
+    let obj = new Base();
+    obj.foo(); // "mixin"
+
+The call `Extensible.extend()` does is add mixin to the head of the prototype
+chain, then update Base to point to the new head of the chain. It's simply
+codifying the pattern described above.
+
+
+Creating extensible, mixin-ready classes
+----------------------------------------
+If you anticipate people wanting to extend your classes with mixins, you can do
+that in several ways. The simplest is to derive your class from Extensible:
+
+    let mixin = {
+      foo() { return "mixin"; }
+    }
+    class Base extends Extensible {}
+    Base = Base.extend(mixin);
+
+which produces the same result as above. Multiple mixins can be supplied to
+`extend()`:
+
+    let mixin1 = { foo: "mixin1" };
+    let mixin2 = { foo: "mixin2" };
+    let mixin3 = { foo: "mixin3" };
+    class Base extends Extensible {}
+    Base = Base.extend(mixin1, mixin2, mixin3);
+
+    let obj = new Base();
+    obj.foo; // "mixin3"
+
+The `extend()` function applies mixins to the head of the prototype chain in
+order, so mixin3 ends up at the head of the chain. Hence, it's mixin3's value
+of `foo` that's returned.
+
+Classes created by extending Extensible inherit the ability to be extended
+themselves.
+
+
+Extending with classes, not just objects
+----------------------------------------
+Mixins are typically plain JavaScript objects, but Extensible's `extend()`
+method can take classes as arguments:
+
+    class Mixin {
+      foo() { return "foo"; }
+      static bar() { return "bar"; }
+    }
+    class Base extends Extensible {}
+    Base = Base.extend(Mixin);
+
+    let obj = new Base();
+    obj.foo(); // "foo"
+    Base.bar(); // "bar"
+
+It's a matter of taste whether to define mixins as plain objects or classes.
+There are some advantages to using a class:
+
+* ES6 supplies a `class` syntax. It's a matter of opinion, but use of
+  `class` may send a stronger signal about the author's intention to readers of
+  the code. Specifically, a class suggests that the code embodies a
+  self-contained package of behavior.
+* A class can provide both static and instance members. The `extend()` method
+  will include *both* when creating the extended class. Static members are
+  handled as "last writer wins": base static class members are copied first,
+  then mixin static class members in the order they're supplied.
+
+Being able to compose classes into the prototype chain can open up new
+opportunities, as shown in the following section.
+
+
+Making existing classes extensible
+----------------------------------
+If you're working with a base class defined elsewhere and either can't or don't
+want to make that base class extensible, you can extend that class to create an
+extensible subclass. This is done, appropriately enough, by supplying Extensible
+*itself* as a mixin class to `extend()`:
+
+    import Thing from 'some/external/dependency.js';
+    let ExtensibleThing = Extensible.extend.call(Thing, Extensible);
+
+Now the resulting ExtensibleThing embodies Thing objects which are inherently
+extensible:
+
+    class Mixin { ... }
+    let SpecialThing = ExtensibleThing.extend(Mixin);
+
+This could be used, for example, to create an extensible subclass of a native
+DOM class like HTMLElement:
+
+    let ExtensibleElement = Extensible.extend.call(HTMLElement, Extensible);
+    let helloMixin = {
+      createdCallback() {
+        this.textContent = "Hello, world!";
+      }
+    };
+    class HelloElement extends ExtensibleElement {}
+    HelloElement = HelloElement.extend(helloMixin);
+    document.registerElement('hello-element', HelloElement);
+    let element = document.createElement('hello-element'); // "Hello, world!"
+
+
+Invoking base method implementations
+====================================
+
+A critical feature noted earlier was the ability to have mixins augment base
+class behavior, not just override it. If multiple mixins or a base classe define
+a method with the same name, we may want to be able to invoke all those
+implementations.
+
+Since here mixins as objects on the prototype chain, a simple way to accomplish
+this goal is to have method implementations cooperate by invoking methods of
+the same name further up the prototype chain.
+
+
+The `super` keyword in ES6
+--------------------------
+ES6 provides a concise and elegant means of doing exactly what we want with its
+`super` keyword:
+
+    class Mixin {
+      foo() {
+        return "Mixin " + super.foo();
+      }
+    }
+    class Base extends Extensible {
+      foo() {
+        return "Base";
+      }
+    }
+    Base = Base.extend(Mixin);
+
+    let obj = new Base();
+    obj.foo() // "Mixin Base"
+
+In another language, the Mixin class' use of `super.foo()` might seem
+strange, since Mixin doesn't originally inherit from anything. But JavaScript
+is a prototypal language in which classes aren't anything magic, just a means
+of talking about the prototype chain. All `super.foo()` does is invoke the
+next `foo()` implementation further up the prototype chain. By the time
+`obj.foo()` is encountered, that prototype chain includes Base's prototype,
+so `super.foo()` invokes Base' `foo()` implementation.
+
+
+Checking for base implementation before invoking `super`
+--------------------------------------------------------
+In the example above, if Mixin is used to extend a class that doesn't already
+have a `foo()` method, the call to `super.foo()` will fail. So, unlike typical
+subclasses, classes that might be used to extend other classes should be
+designed with resiliency in mind. Specifically, mixin methods should check to
+see whether a base implementation exists before invoking `super`.
+
+    class Mixin {
+      foo() {
+        let result = "Mixin";
+        if (super.foo) {
+          result += " " + super.foo();
+        }
+        return result;
+      }
+    }
+
+
+Invoking base implementations in ES5 using the `super` helper
+-------------------------------------------------------------
+While native ES6 neatly meets our needs here with `super`, a significant
+question is how to accomplish the same result in ES5. The `super` behavior
+turns out to be ferociously hard to polyfill.
+
+Worse, when using an ES6-to-ES5 transpiler like Babel, the simplest way to
+compile a call like `super.foo()` is for the compiler to hard-code a reference
+to the base class at compile time. That solution is incompatible with
+Extensible's dynamic run-time modifications of the prototype chain.
+
+To allow method invocations up the prototype chain in ES5 (including ES6
+transpiled to ES5), Extensible provides a `super` instance method. This takes as
+its single argument a reference to the current mixin:
+
+    class Mixin {
+      foo() {
+        let result = "Mixin";
+        let superFoo = this.super(Mixin).foo;
+        if (superFoo) {
+          result += " " + superFoo();
+        }
+        return result;
+      }
+    }
+
+The result of calling `super` will be the prototype *on this particular
+prototype chain* that follows the indicated mixin. A single mixin can be used to
+extend multiple base classes, so the result of calling `this.super(Mixin)` above
+will depend on the specific base class to which the Mixin class was added.
+
+Once `this.super()` returns a prototype, the desired method can be inspected to
+see if it exists and, if so, to invoke it. The above ES6 code can be safely
+transpiled to ES5. While obviously much more verbose than the native ES6
+version, it's nevertheless helpful to be able to use Extensible mixins in ES5.
 
 
 Composition vs inheritance
@@ -255,142 +502,3 @@ We can compose combinations of those:
     let Class1A = Object.setPrototypeOf(copy1, copyA);
 
 Here we end up with two classes that each of three of the mixins.
-
-
-Extending classes with classes
-==============================
-
-    class Todo {
-      constructor (description) {
-        this.description = description || 'Untitled';
-        this.done = false;
-      }
-      do() {
-        this.done = true;
-      }
-      undo() {
-        this.done = false;
-      }
-    }
-
-    class Numbered {
-      get number() {
-        return this._number;
-      }
-      set number(value) {
-        this._number = value;
-      }
-    }
-
-    let Bug = ExtensibleClass.extend.call(Todo, Numbered);
-    let bug = new Bug("Nothing works");
-    bug.number = 1; // From Numbered
-    bug.do();       // From ToDo
-
-
-The prototype chain here is
-
-    Bug -> ToDo -> Object
-
-Where Bug has all the members of Numbered.
-
-We could also define Numbered as a plain object:
-
-    let Numbered = {
-      get number() {
-        return this._number;
-      }
-      set number(value) {
-        this._number = value;
-      }
-    }
-
-    let Bug = ExtensibleClass.extend.call(Todo, Numbered);
-
-There are some advantages of using a class, however:
-
-* ES6 supplies special `class` syntax. It's a matter of opinion, but use of
-  `class` may send a stronger signal about the author's intention to readers of
-  the code. Specifically, a class suggests that it will be instantiated to
-  provide behavior to objects.
-* A class can provide both static and instance members. The .extend() facility
-  will include both when creating the extended class.
-
-
-Classes meant to be extended
-============================
-
-Can invoke ExtensibleClass.extend(), as shown above:
-
-    let Bug = ExtensibleClass.extend.call(ToDo, Numbered);
-
-If you expect your class to be extended, you can endow it with self-extending
-abilities by inheriting from ExtensibleClass:
-
-    class ToDo extends ExtensibleClass {}
-    class Numbered {}
-    let Bug = ToDo.extend(Numbered);
-
-ExtensibleClass is itself an extension that can be applied to other classes
-to make them extensible:
-
-    class ToDo {}
-    let ExtensibleToDo = ExtensibleClass.extend.call(ToDo, ExtensibleClass);
-    let Bug = ExtensibleToDo.extend(Numbered);
-
-Classes created by extending ExtensibleClass inherit the ability to be extended
-themselves.
-
-
-Class redefinition
-==================
-
-If your intention is to permanently alter a class, you can redefine it to
-reference the extended class. E.g., if we wanted to make all ToDo instances
-have a number, we could do:
-
-    class ToDo extends ExtensibleClass {...}
-    class Numbered {...}
-    let ToDo = ToDo.extend(Numbered);
-
-This will only affect new ToDo instances. It will not retroactively change
-the behavior of existing ToDo instances. Typically, you'd only want to redefine
-a class like this early, before creating any instances.
-
-
-Invoking base method implementations
-====================================
-
-    class Todo {
-      constructor (description) {
-        this.description = description || 'Untitled';
-        this.done = false;
-      }
-      do() {
-        this.done = true;
-      }
-      undo() {
-        this.done = false;
-      }
-    }
-
-    class Encouraging {
-      do() {
-        this.super(Encouraging).do.call(this);
-        console.log("Good job!");
-      }
-    }
-
-    let Bug = ExtensibleClass.extend.call(Todo, Encouraging);
-    let bug = new Bug("Nothing works");
-    bug.do();       // Sets done to true, then writes "Good job!" to console.
-
-The `super` method takes as its first argument a reference to the class
-implementing the method being overridden. The second argument is the name of the
-method being overridden. Any additional arguments to `super` will be passed to
-the superclass method implementation. The result of `super` will be the result
-of calling the superclass method.
-
-Significantly, `super` will only invoke a superclass method *if one exists*.
-This optional invocation ensures the extension can be applied to any class,
-whether or not it already defines the method in question.
