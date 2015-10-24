@@ -476,29 +476,27 @@ Composition vs inheritance
 
 *** vogue these days is to use composition instead of inheritance. Inheritance,
 it is said, leads to complex, brittle systems.
-People from OO backgrounds think of the prototype chain as synonymous with
-inheritance, but that's just one way to conceptualize JavaScript. The prototype
-chain is just a linked list -- how you want to use it is up to you. In this
-case, we're using the prototype chain, but not to implement classical
-inheritance. Because we work with *copies* of classes/prototypes, we're
-*composing* behavior.
+
+People from backgrounds in more traditional class-oriented languages think of
+the prototype chain as synonymous with inheritance, but that's just one way to
+conceptualize JavaScript. The prototype chain is just a linked list -- how you
+want to use it is up to you.
+
+In this case, we're using the prototype chain, not to implement classical
+inheritance, but to compose behaviors in arbitrary combinations and orders.
+
+    class Mixin1 {}
+    class Mixin2 {}
+    let Base12 = Extensible.extend(Mixin1, Mixin2);
+    let Base21 = Extensible.extend(Mixin2, Mixin1);
 
 Consider three mixins and a base class:
 
-    let mixin1 = {};
-    let mixin2 = {};
-    let Mixin3 = {};
-    class Base {}
+    class Mixin1 {}
+    class Mixin2 {}
+    class Mixin3 {}
+    let Base12 = Extensible(Mixin1, Mixin2);
+    let Base23 = Extensible(Mixin2, Mixin3);
+    let Base13 = Extensible(Mixin1, Mixin3);
 
-We can compose combinations of those:
-
-    /// fix
-    let copy1 = Object.assign(mixin1, {});
-    let copyA = Object.assign(MixinA, {});
-    let Class1A = Object.setPrototypeOf(copy1, copyA);
-
-    let copy2 = Object.assign(mixin1, {});
-    let copyB = Object.assign(MixinA, {});
-    let Class1A = Object.setPrototypeOf(copy1, copyA);
-
-Here we end up with two classes that each of three of the mixins.
+Here we end up with three classes that each of two of the mixins.

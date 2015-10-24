@@ -104,5 +104,22 @@ suite("Extensible", () => {
     assert.equal(extended.method(), 'result');
     assert.equal(extended.property, 'value');
   });
+  
+  // test("can extend with multiple levels of inheritance", () => {
+  //   class ExtensionSubclass extends MethodExtension {
+  //     method() {
+  //       let base = this.super(ExtensionSubclass).method;
+  //       if (base) {
+  //         base();
+  //       }
+  //       this.extensionSubclassMethodInvoked = true;
+  //     }
+  //   }
+  //   let Subclass = Extensible.extend(ExtensionSubclass);
+  //   let instance = new Subclass();
+  //   instance.method();
+  //   assert(instance.extensionMethodInvoked);
+  //   assert(instance.extensionSubclassMethodInvoked);
+  // });
 
 });

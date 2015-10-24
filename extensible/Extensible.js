@@ -90,15 +90,24 @@ function copyMembers(members, target, ignoreMembers) {
  */
 function extend(base, extension) {
 
+  let extensionAncestor;
   let result;
   if (typeof base === 'function') {
     // Extending a real class.
     class subclass extends base {}
     result = subclass;
+    extensionAncestor = Object.getPrototypeOf(base.prototype).constructor;
   } else {
     // Extending a plain object.
     result = {};
     Object.setPrototypeOf(result, base);
+    extensionAncestor = Object.getPrototypeOf(base);
+  }
+  
+  if (extensionAncestor && extensionAncestor !== Function && extensionAncestor !== Object) {
+    // The extension itself derives from another class/object. Extend that
+    // first.
+    
   }
 
   let baseIsClass = (typeof base === 'function');
