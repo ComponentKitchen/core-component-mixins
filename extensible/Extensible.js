@@ -90,28 +90,33 @@ function copyMembers(members, target, ignoreMembers) {
  */
 function extend(base, extension) {
 
-  let extensionAncestor;
-  let result;
-  if (typeof base === 'function') {
-    // Extending a real class.
-    class subclass extends base {}
-    result = subclass;
-    extensionAncestor = Object.getPrototypeOf(base.prototype).constructor;
-  } else {
-    // Extending a plain object.
-    result = {};
-    Object.setPrototypeOf(result, base);
-    extensionAncestor = Object.getPrototypeOf(base);
-  }
-  
-  if (extensionAncestor && extensionAncestor !== Function && extensionAncestor !== Object) {
-    // The extension itself derives from another class/object. Extend that
-    // first.
-    
-  }
-
+  // Check whether the base and extension are classes or plain objects.
   let baseIsClass = (typeof base === 'function');
   let extensionIsClass = (typeof extension === 'function');
+
+  // Check to see if the *extension* has a base class/prototype.
+  let extensionBase = extensionIsClass ?
+    Object.getPrototypeOf(extension.prototype).constructor :
+    Object.getPrototypeOf(extension);
+  if (extensionBase &&
+      extensionBase !== Function &&
+      extensionBase !== Object) {
+    // The extension itself derives from another class/object.
+    // Recurse, and extend with the extension's base first.
+    base = extend(base, extensionBase);
+  }
+
+  let result;
+  if (baseIsClass) {
+    // Extend a real class by creating a subclass.
+    class subclass extends base {}
+    result = subclass;
+  } else {
+    // Extend a plain object by creating another plain object.
+    result = {};
+    Object.setPrototypeOf(result, base);
+  }
+
   if (baseIsClass && extensionIsClass) {
     // Extending a class with a class.
     // Copy both static and instance methods.
