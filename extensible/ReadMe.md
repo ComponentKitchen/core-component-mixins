@@ -461,9 +461,9 @@ its single argument a reference to the current mixin:
     }
 
 The result of calling `super` will be the prototype *on this particular
-prototype chain* that follows the indicated mixin. A single mixin can be used to
-extend multiple base classes, so the result of calling `this.super(Mixin)` above
-will depend on the specific base class to which the Mixin class was added.
+prototype chain* which follows the indicated mixin. A single mixin can be used
+to extend multiple base classes, so the result of calling `this.super(Mixin)`
+above will depend on which base class was extended with Mixin to create `this`.
 
 Once `this.super()` returns a prototype, the desired method can be inspected to
 see if it exists and, if so, to invoke it. The above ES6 code can be safely
