@@ -2,8 +2,10 @@ Introduction
 ============
 
 The module Extensible.js implements a class called Extensible that provides a
-general-purpose means of extending class and object behavior along the lines of
-mixins, but leveraging the JavaScript prototype chain for method disambiguation.
+general-purpose means of composing class and object behavior with mixins by
+leveraging the JavaScript prototype chain. This reduces conceptual overhead, can
+provide for more understandable behavior, and takes advantage of native language
+features.
 
 
 Goals:
@@ -140,11 +142,21 @@ to it:
 
 Again, the idiosyncratic nature of mixin implementations means we can't
 reason about aggregate behavior without knowing more about FrameworkDuJour.
-Some frameworks will invoke Base.foo() first, then the mixin foo()
+* Some frameworks will invoke Base.foo() first, then the mixin foo()
 implementations. Other frameworks will do the opposite: invoke mixins first,
-then the Base implementation. Most frameworks will invoke mixin1.foo() before
+then the Base implementation.
+* Most frameworks will invoke mixin1.foo() before
 mixin2.foo(), because they were specified in that order, but again that behavior
 isn't guaranteed to be consistent across frameworks.
+* The precise aggregation behavior may even vary within a single framework.
+Component frameworks like React and Polymer both treat "lifecycle methods"
+specially: if multiple mixins implement a given lifecycle method, the functions
+are composed, and at those points in the component lifecycle, all the mixin
+behaviors will apply. Other methods — those without the special lifecycle
+names — may be treated as "last writer wins".
+
+All this complexity makes it hard to learn the specifics of a given framework,
+let alone work effectively with multiple frameworks in the same codebase.
 
 *** Links to these? ***
 http://raganwald.com/2015/06/17/functional-mixins.html
@@ -278,6 +290,16 @@ The call `Extensible.extend()` does is add mixin to the head of the prototype
 chain, then update Base to point to the new head of the chain. It's simply
 codifying the pattern described above.
 
+The use of `Extensible.extend()` here is, of course, only slightly less
+idiosyncratic than the use of something like `FrameworkDuJour.classFactory()`.
+That said, the Extensible class is actually doing very little — it's just
+constructing a prototype chain. Once that's done, there's nothing else going on
+here but native JavaScript.
+
+That's more than can be said of many frameworks, where the class factory may not
+only perform considerable magic, it may produce an object with proprietary
+internal data structures and behavior.
+
 
 Creating extensible, mixin-ready classes
 ----------------------------------------
@@ -339,22 +361,24 @@ There are some advantages to using a class:
   then mixin static class members in the order they're supplied.
 
 Being able to compose classes into the prototype chain can open up new
-opportunities, as shown in the following section.
+opportunities. For example, it's possible to create a non-trivial class
+hierarchy for *mixins*. When Extensible applies a mixin/class as an extension,
+the members are copied from the mixin's prototype chain all the way up to Object
+(for plain objects) or Function (for classes).
 
 
 Making existing classes extensible
 ----------------------------------
-If you're working with a base class defined elsewhere and either can't or don't
-want to make that base class extensible, you can extend that class to create an
-extensible subclass. This is done, appropriately enough, by supplying Extensible
-*itself* as a mixin class to `extend()`:
+Intrestingly, it turns out that you use Extensible to apply *itself* as a mixin.
+This is useful if you're working with a base class defined elsewhere and can't
+(or don't want to) make that particular base class extensible. You can create
+an extensible subclass of that base class by supplying Extensible itself as an
+argument to `extend()`:
 
     import Thing from 'some/external/dependency.js';
     let ExtensibleThing = Extensible.extend.call(Thing, Extensible);
 
-Now the resulting ExtensibleThing embodies Thing objects which are inherently
-extensible:
-
+    // ExtensibleThing now embodies extensible Thing objects.
     class Mixin { ... }
     let SpecialThing = ExtensibleThing.extend(Mixin);
 
@@ -378,18 +402,18 @@ Invoking base method implementations
 
 A critical feature noted earlier was the ability to have mixins augment base
 class behavior, not just override it. If multiple mixins or a base classe define
-a method with the same name, we may want to be able to invoke all those
-implementations.
+a method with the same name, we may want to be able to invoke all of those
+implementations, not just the method belonging to the "last writer".
 
-Since here mixins as objects on the prototype chain, a simple way to accomplish
-this goal is to have method implementations cooperate by invoking methods of
-the same name further up the prototype chain.
+Since here mixins as objects on the prototype chain, we can solve this problem
+just like it's always done in JavaScript: have method implementations cooperate
+by invoking methods of the same name further up the prototype chain.
 
 
 The `super` keyword in ES6
 --------------------------
-ES6 provides a concise and elegant means of doing exactly what we want with its
-`super` keyword:
+ES6 provides a concise and elegant means of doing *exactly* what we want with
+its `super` keyword:
 
     class Mixin {
       foo() {
@@ -408,20 +432,23 @@ ES6 provides a concise and elegant means of doing exactly what we want with its
 
 In another language, the Mixin class' use of `super.foo()` might seem
 strange, since Mixin doesn't originally inherit from anything. But JavaScript
-is a prototypal language in which classes aren't anything magic, just a means
-of talking about the prototype chain. All `super.foo()` does is invoke the
-next `foo()` implementation further up the prototype chain. By the time
-`obj.foo()` is encountered, that prototype chain includes Base's prototype,
-so `super.foo()` invokes Base' `foo()` implementation.
+is a prototypal language in which classes aren't anything fixed at compile
+time; they're just a means of talking about the prototype chain. All
+`super.foo()` does is invoke the next `foo()` implementation further up the
+prototype chain. By the time `obj.foo()` is encountered, that prototype chain
+includes Base's prototype, so `super.foo()` invokes Base' `foo()`
+implementation.
 
 
 Checking for base implementation before invoking `super`
 --------------------------------------------------------
-In the example above, if Mixin is used to extend a class that doesn't already
-have a `foo()` method, the call to `super.foo()` will fail. So, unlike typical
-subclasses, classes that might be used to extend other classes should be
-designed with resiliency in mind. Specifically, mixin methods should check to
-see whether a base implementation exists before invoking `super`.
+If the Mixin in the above example is used to extend a class that doesn't already
+have a `foo()` method, its call to `super.foo()` will fail. So, unlike typical
+subclasses, classes intended to extend other classes should be designed with
+resiliency in mind. Specifically, mixin methods should check to see whether a
+base implementation exists before invoking `super`. They should also generally
+pass along the result returned from the superclass' implementation, unless
+they specifically want to manipulate that result:
 
     class Mixin {
       foo() {
@@ -433,17 +460,22 @@ see whether a base implementation exists before invoking `super`.
       }
     }
 
+This Mixin can now be used to extend any class, whether or not it has a `foo()`
+method.
+
 
 Invoking base implementations in ES5 using the `super` helper
 -------------------------------------------------------------
 While native ES6 neatly meets our needs here with `super`, a significant
 question is how to accomplish the same result in ES5. The `super` behavior
-turns out to be ferociously hard to polyfill.
+turns out to be ferociously hard to polyfill in ES5.
 
 Worse, when using an ES6-to-ES5 transpiler like Babel, the simplest way to
 compile a call like `super.foo()` is for the compiler to hard-code a reference
-to the base class at compile time. That solution is incompatible with
-Extensible's dynamic run-time modifications of the prototype chain.
+to the base class at compile time. That solution is unfortunately incompatible
+with Extensible's dynamic run-time modifications of the prototype chain. This
+means that the `super` keyword can't be used with Extensible mixins that will
+be compiled to ES5.
 
 To allow method invocations up the prototype chain in ES5 (including ES6
 transpiled to ES5), Extensible provides a `super` instance method. This takes as
@@ -467,36 +499,62 @@ above will depend on which base class was extended with Mixin to create `this`.
 
 Once `this.super()` returns a prototype, the desired method can be inspected to
 see if it exists and, if so, to invoke it. The above ES6 code can be safely
-transpiled to ES5. While obviously much more verbose than the native ES6
-version, it's nevertheless helpful to be able to use Extensible mixins in ES5.
+transpiled to ES5. While this syntax is obviously much more verbose than the
+native ES6 version, it's nevertheless helpful to be able to use Extensible
+mixins in ES5.
 
 
 Composition vs inheritance
 ==========================
 
-*** vogue these days is to use composition instead of inheritance. Inheritance,
-it is said, leads to complex, brittle systems.
+The presence of a `class` keyword or `class A extends B` in these examples might
+be taken as an indication that classical object-oriented inheritance is being
+used. That might be problem for some people, who claim that composition of
+behavior (such as mixins) is superior to classical inheritance. Inheritance,
+they say, leads to complex, brittle systems. Whether or not that claim is true,
+it's important to note that what's going on in the examples above is not
+classical inheritance.
 
-People from backgrounds in more traditional class-oriented languages think of
-the prototype chain as synonymous with inheritance, but that's just one way to
-conceptualize JavaScript. The prototype chain is just a linked list -- how you
-want to use it is up to you.
+People from backgrounds in traditional class-oriented languages think of
+JavaScript's prototype chain as synonymous with inheritance, but that's just one
+way to conceptualize JavaScript. The prototype chain is just a dynamic linked
+list -- how you want to use it is up to you.
 
 In this case, we're using the prototype chain, not to implement classical
 inheritance, but to compose behaviors in arbitrary combinations and orders.
+Among other things, this means we can apply the same mixin at different points
+in the "class hierarchy" to create results that cannot be achieved with strict
+inheritance.
 
-    class Mixin1 {}
-    class Mixin2 {}
-    let Base12 = Extensible.extend(Mixin1, Mixin2);
-    let Base21 = Extensible.extend(Mixin2, Mixin1);
+Suppose we have two classes, Base1 and Base2, which share no common ancestor
+(aside from Object). We can extend both of those classes with the same mixin:
 
-Consider three mixins and a base class:
+    class Base1 {}
+    class Base2 {}
+    class Mixin {
+      foo() { return "foo"; }
+    }
+    ExtendedBase1 = Extensible.extend.call(Base1, Mixin);
+    ExtendedBase2 = Extensible.extend.call(Base2, Mixin);
 
-    class Mixin1 {}
-    class Mixin2 {}
-    class Mixin3 {}
-    let Base12 = Extensible(Mixin1, Mixin2);
-    let Base23 = Extensible(Mixin2, Mixin3);
-    let Base13 = Extensible(Mixin1, Mixin3);
+    obj1 = new ExtendedBase1();
+    obj2 = new ExtendedBase2();
 
-Here we end up with three classes that each of two of the mixins.
+We now have a *copy* of the Mixin behavior along two different prototype chains:
+
+    obj1 --> ExtendedBase1 (copy of Mixin) --> Base1 --> Object
+    obj2 --> ExtendedBase2 (copy of Mixin) --> Base2 --> Object
+
+So even thought obj1 and obj2 share no ancestor but Object, we can apply the
+same method to both:
+
+    obj1.foo(); // "foo"
+    obj2.foo(); // "foo" also
+
+This form of composition allows an enormous degree of flexibility in factoring
+code. Each distinct behavior can be packaged as a mixin object or class, and
+then combined in many ways to create a desired set of instantiable classes. This
+can allow you to achieve a good separation of concerns. At the same time,
+capitalizing on the native nature of the JavaScript prototype chain allows your
+codebase to introduce few new concepts that would have to be mastered by
+newcomers to your codebase.
