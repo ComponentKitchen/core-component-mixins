@@ -22,8 +22,8 @@ let extensionForPrototype = new Map();
 class Extensible {
 
   /*
-   * Return the prototype in the prototype chain that's above the one that
-   * implemented the given extension.
+   * Return the prototype that's above the one that implemented the given
+   * extension in the prototype chain.
    *
    * This is used in ES5-compatible extensions to invoke base property/method
    * implementations, regardless of where the extension ended up in the
@@ -72,12 +72,12 @@ class Extensible {
 
 
 /*
- * Copy the given members to the target.
+ * Copy the given properties/methods to the target.
  */
-function copyMembers(members, target, ignoreMembers) {
-  Object.getOwnPropertyNames(members).forEach(name => {
-    if (!ignoreMembers || ignoreMembers.indexOf(name) < 0) {
-      let descriptor = Object.getOwnPropertyDescriptor(members, name);
+function copyOwnProperties(source, target, ignorePropertyNames = []) {
+  Object.getOwnPropertyNames(source).forEach(name => {
+    if (ignorePropertyNames.indexOf(name) < 0) {
+      let descriptor = Object.getOwnPropertyDescriptor(source, name);
       Object.defineProperty(target, name, descriptor);
     }
   });
@@ -94,7 +94,7 @@ function extend(base, extension) {
   let baseIsClass = (typeof base === 'function');
   let extensionIsClass = (typeof extension === 'function');
 
-  // Check to see if the *extension* has a base class/prototype.
+  // Check to see if the *extension* has a base class/prototype of its own.
   let extensionBase = extensionIsClass ?
     Object.getPrototypeOf(extension.prototype).constructor :
     Object.getPrototypeOf(extension);
@@ -115,19 +115,19 @@ function extend(base, extension) {
   if (baseIsClass && extensionIsClass) {
     // Extending a class with a class.
     // Copy both static and instance methods.
-    copyMembers(extension, result, Object.getOwnPropertyNames(Function));
-    copyMembers(extension.prototype, result.prototype, ['constructor']);
+    copyOwnProperties(extension, result, Object.getOwnPropertyNames(Function));
+    copyOwnProperties(extension.prototype, result.prototype, ['constructor']);
   } else if (!baseIsClass && extensionIsClass) {
     // Extending a plain object with a class.
     // Copy prototype methods directly to result.
-    copyMembers(extension.prototype, result, ['constructor']);
+    copyOwnProperties(extension.prototype, result, ['constructor']);
   } else if (baseIsClass && !extensionIsClass) {
     // Extending class with plain object.
     // Copy extension to result prototype.
-    copyMembers(extension, result.prototype);
+    copyOwnProperties(extension, result.prototype);
   } else {
     // Extending a plain object with a plain object.
-    copyMembers(extension, result);
+    copyOwnProperties(extension, result);
   }
 
   // Remember which extension was used to create this new class so that extended
@@ -148,21 +148,6 @@ function getPrototypeImplementingExtension(obj, extension) {
     }
   }
   return null;
-}
-
-/*
- * Return a descriptor for the named property, looking up the prototype chain.
- */
-function getPropertyDescriptor(prototype, name) {
-  if (!prototype) {
-    return null;
-  }
-  let descriptor = Object.getOwnPropertyDescriptor(prototype, name);
-  if (descriptor) {
-    return descriptor;
-  }
-  let superProto = Object.getPrototypeOf(prototype);
-  return getPropertyDescriptor(superProto, name);
 }
 
 
