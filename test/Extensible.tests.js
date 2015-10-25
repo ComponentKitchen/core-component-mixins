@@ -122,4 +122,24 @@ suite("Extensible", () => {
     assert(instance.extensionSubclassMethodInvoked);
   });
 
+  test("extension property can reference superclass' property", () => {
+    class PropertyExtension {
+      get property() {
+        let base = this.super(PropertyExtension);
+        let descriptor = base && Object.getOwnPropertyDescriptor(base, 'property');
+        return (descriptor) ?
+          descriptor.get.call(this) :
+          'extension value';
+      }
+    }
+    class Subclass extends Extensible {
+      get property() {
+        return 'base value';
+      }
+    }
+    Subclass = Subclass.extend(PropertyExtension);
+    let instance = new Subclass();
+    assert.equal(instance.property, 'base value');
+  });
+
 });
