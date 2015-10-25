@@ -106,16 +106,11 @@ function extend(base, extension) {
     base = extend(base, extensionBase);
   }
 
-  let result;
-  if (baseIsClass) {
+  let result = baseIsClass ?
     // Extend a real class by creating a subclass.
-    class subclass extends base {}
-    result = subclass;
-  } else {
+    class subclass extends base {} :
     // Extend a plain object by creating another plain object.
-    result = {};
-    Object.setPrototypeOf(result, base);
-  }
+    Object.create(base);
 
   if (baseIsClass && extensionIsClass) {
     // Extending a class with a class.
