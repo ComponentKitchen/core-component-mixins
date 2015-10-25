@@ -20,8 +20,8 @@ class PropertyExtension {
 /* Extension that defines a method */
 class MethodExtension {
   method() {
-    let base = this.super(MethodExtension).method;
-    let result = base ? base.call(this) : 'extension result';
+    let superMethod = this.super(MethodExtension).method;
+    let result = superMethod ? superMethod.call(this) : 'extension result';
     this.extensionMethodInvoked = true;
     return result;
   }
@@ -108,9 +108,9 @@ suite("Extensible", () => {
   test("extension can has multiple levels of inheritance", () => {
     class ExtensionSubclass extends MethodExtension {
       method() {
-        let base = this.super(ExtensionSubclass).method;
-        if (base) {
-          base.call(this);
+        let superMethod = this.super(ExtensionSubclass).method;
+        if (superMethod) {
+          superMethod.call(this);
         }
         this.extensionSubclassMethodInvoked = true;
       }
@@ -125,8 +125,8 @@ suite("Extensible", () => {
   test("extension property can reference superclass' property", () => {
     class PropertyExtension {
       get property() {
-        let base = this.super(PropertyExtension);
-        let descriptor = base && Object.getOwnPropertyDescriptor(base, 'property');
+        let superPrototype = this.super(PropertyExtension);
+        let descriptor = superPrototype && Object.getOwnPropertyDescriptor(superPrototype, 'property');
         return (descriptor) ?
           descriptor.get.call(this) :
           'extension value';
