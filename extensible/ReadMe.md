@@ -3,17 +3,17 @@ Introduction
 
 The module Extensible.js implements a class called Extensible that provides a
 general-purpose means of composing class and object behavior with mixins by
-leveraging the JavaScript prototype chain. This reduces conceptual overhead, can
-provide for more understandable behavior, and takes advantage of native language
-features.
+leveraging the JavaScript prototype chain. This takes advantage of native
+language features to reduce conceptual overhead and enable a substantial degree
+of expressiveness and power.
 
 
 Goals:
 
 1. Provide a mixin solution that feels like a JavaScript solution. It should
-work with the language, not fight against it. Be designed with ES6 in mind,
-particularly its introduction of `class`.
-2. Introduce as few concepts as possible.
+work with the language, not fight against it. It should be designed with ES6 in
+mind, particularly its introduction of `class` and `super` keywords.
+2. Introduce as few new concepts as possible.
 3. Define an unambigious means of resolving conflicts in function names. If
 multiple mixins/classes define a method with the same name, there should be a
 predictable way of invoking all of them in a well-known order.
@@ -67,14 +67,21 @@ FrameworkDuJour:
 
 Typically, the classFactory() method copies the members of the mixin to the
 prototype of the class being created. This makes the mixin's members available
-to all new instances of the resulting class.
+to all new instances of the resulting class. Multiple mixins can be applied to
+the same class.
 
-*** more on why mixins are attractive ***
+These attributes of mixins can make them a convenient and useful way to factor
+behavior. You can compose behaviors to get the classes you want. Because mixin
+properties and methods are generally flattened into the prototype of class
+you're creating, they can be efficient in terms of memory and performance.
 
-There are some disadvantages to mixins like this:
+That said, there are some disadvantages to mixins like this:
 
 1. The Base class above feels more "real" than the mixins, even though
-JavaScript natively makes no such distinction. They're all just objects.
+JavaScript natively makes no such distinction. To JavaScript, these are all just
+objects. But in most frameworks, mixins are a second-class construct. They often
+can't be instantiated, for example. (One typically has create a trivial class
+first, then add the desired mixin.)
 2. The use of the custom classFactory() method is idiosyncratic to this
 FrameworkDuJour framework. A developer looking at the above code can't know what
 how the "mixins" key is going to affect the resulting class unless it knows more
@@ -83,9 +90,9 @@ about FrameworkDuJour.
 conventions for classes, we don't *know* that for sure. We might, for example,
 assume that classFactory() is establishing a JavaScript prototype chain whose
 behavior is governed by the language itself. We might assume that we can
-instantiate Base with `new Base()`. But those assumptions aren't guaranteed to
-be true. If we're unfamiliar with FrameworkDuJour, we can't be sure how to work
-with Base, or how Base objects will behave.
+instantiate Base with `new Base()`. But those assumptions might prove false. If
+we're unfamiliar with FrameworkDuJour, we can't be sure how to work with Base,
+or how Base objects will behave.
 
 
 Mixin conflict resolution
@@ -158,10 +165,6 @@ names — may be treated as "last writer wins".
 All this complexity makes it hard to learn the specifics of a given framework,
 let alone work effectively with multiple frameworks in the same codebase.
 
-*** Links to these? ***
-http://raganwald.com/2015/06/17/functional-mixins.html
-http://raganwald.com/2015/06/20/purely-functional-composition.html
-
 
 JavaScript already has an extension mechanism: the prototype chain
 ==================================================================
@@ -171,12 +174,14 @@ behavior through the language's prototype chain. The chain is a linked list of
 object prototypes. If multiple prototypes on the chain implement a method of the
 same name, the order of the linked list provides a very specific means of
 disambiguating name conflicts: the first prototype in the chain that implements
-the method wins.
+the method wins. (If you're unfamiliar with the prototype chain, many articles
+on the web cover the topic in depth. A reasonable starting point is
+[Inheritance and the prototype chain](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain?redirectlocale=en-US&redirectslug=JavaScript%2FGuide%2FInheritance_and_the_prototype_chain).)
 
-This is a language feature, and its behavior is definitively unambiguous. All
-JavaScript implementations treat the prototype chain exactly the same. To many
-people, in fact, the prototypal nature of JavaScript is the language's
-defining characteristic.
+This prototype chain is a language feature, and its behavior is definitively
+unambiguous. All JavaScript implementations are required to treat the prototype
+chain exactly the same. To many people, in fact, the prototypal nature of
+JavaScript is the language's defining characteristic.
 
 We can use the prototype chain as the basis for a mixin solution whose
 conflict resolution strategy is both clearly defined and flexible. Instead of
@@ -198,6 +203,7 @@ A very brute-force approach, which destructively modifies the mixins:
     Object.setPrototypeOf(mixin1, Base.prototype);
     Object.setPrototypeOf(mixin2, mixin1);
     let ExtendedBase = mixin2;
+    ExtendedBase.prototype.constructor = ExtendedBase;
     let obj = new ExtendedBase();
 
     obj.foo(); // "mixin2"
@@ -218,6 +224,7 @@ assumes we haven't created any class instances yet.)
     Object.setPrototypeOf(mixin1, Base.prototype);
     Object.setPrototypeOf(mixin2, mixin1);
     Base = mixin2; // redefine Base
+    Base.prototype.constructor = Base;
     let obj = new Base();
 
 The prototype chain is the same, it's just that name "Base" points to a
@@ -234,6 +241,7 @@ them before changing their prototypes:
     Object.setPrototypeOf(copy1, Base.prototype);
     Object.setPrototypeOf(copy2, copy1);
     Base = copy1;
+    Base.prototype.constructor = Base;
 
 Now we have:
 
@@ -499,9 +507,9 @@ above will depend on which base class was extended with Mixin to create `this`.
 
 Once `this.super()` returns a prototype, the desired method can be inspected to
 see if it exists and, if so, to invoke it. The above ES6 code can be safely
-transpiled to ES5. While this syntax is obviously much more verbose than the
-native ES6 version, it's nevertheless helpful to be able to use Extensible
-mixins in ES5.
+transpiled to ES5. While this syntax is obviously more verbose than the native
+ES6 version, it's nevertheless helpful to be able to use Extensible mixins in
+ES5.
 
 
 Composition vs inheritance
@@ -545,8 +553,9 @@ We now have a *copy* of the Mixin behavior along two different prototype chains:
     obj1 --> ExtendedBase1 (copy of Mixin) --> Base1 --> Object
     obj2 --> ExtendedBase2 (copy of Mixin) --> Base2 --> Object
 
-So even thought obj1 and obj2 share no ancestor but Object, we can apply the
-same method to both:
+Such a structure is not possible in classical single inheritance. Even thought
+obj1 and obj2 share no ancestor but Object, we can apply the same method to
+both:
 
     obj1.foo(); // "foo"
     obj2.foo(); // "foo" also
