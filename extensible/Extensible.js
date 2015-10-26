@@ -61,10 +61,10 @@ class Extensible {
    *
    */
   static extend(...extensions) {
-    // We create a new subclass for each extension in turn. The result of
-    // becomes the base class extended by any subsequent extensions. It turns
-    // out that we can use Array.reduce() to concisely express this, using the
-    // current (original) class as the seed for reduce().
+    // We create a new subclass for each extension in turn. The result becomes
+    // the base class extended by any subsequent extensions. It turns out that
+    // we can use Array.reduce() to concisely express this, using the current
+    // (original) class as the seed for reduce().
     return extensions.reduce(extend, this);
   }
 
