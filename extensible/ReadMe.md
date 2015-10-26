@@ -563,3 +563,14 @@ then combined in many ways to create a desired set of instantiable classes. This
 permits a good separation of concerns. At the same time, capitalizing on the
 native nature of the JavaScript prototype chain allows your codebase to
 minimize the number of new concepts that must mastered by future maintainers.
+
+
+Framework independence
+======================
+
+Because this approach just uses the JavaScript prototype chain in a standard
+way, mixins designed this way are *independent of any framework*. As long as
+they cooperate with other mixins — by invoking `super` when appropriate — they
+can be composed into classes by other systems using the same pattern. The
+Extensible class documented here, and its `extend()` method, represent just one
+possible implementation.
