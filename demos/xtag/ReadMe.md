@@ -6,3 +6,5 @@ extensible architecture here makes that possible.
 
 In this example, the hypothetical X-Tag variant adds an X-Tag specific approach
 to wiring up event handlers declaratively.
+
+[Live demo](http://componentkitchen.github.io/element-base/demos/xtag)

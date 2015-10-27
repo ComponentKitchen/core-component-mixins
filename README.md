@@ -49,7 +49,7 @@ mixins to demonstrate that that is possible.
 
 A [demo](demos/index.html) shows this sample ElementBase class being used to
 create a simple [greet-element](demos/GreetElement.js) component. This can be
-viewed as a [live demo](http://janmiksovsky.github.io/element-base/demos/index.html).
+viewed as a [live demo](http://componentkitchen.github.io/element-base/demos/index.html).
 
 
 # Separating class construction from custom element registration
