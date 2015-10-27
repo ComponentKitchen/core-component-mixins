@@ -1,5 +1,8 @@
 /*
- * An extensible HTML element
+ * An extensible HTML element.
+ *
+ * This class is provided just as a convenience. One could also start with
+ * HTMLElement at the top level, and add extensibility by mixing in Extensible.
  */
 
 import Extensible from '../extensible/Extensible';

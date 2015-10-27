@@ -1,26 +1,29 @@
 /*
- * Demonstration of creation of a base class for a particular framework.
+ * Demonstration of creation of a base class for a hypothetical version of the
+ * X-Tag framework.
  */
 
-import ExtensibleElement from '../../src/ExtensibleElement';
+import Extensible from '../../extensible/Extensible';
 import TemplateStamping from '../../src/TemplateStamping';
 import AttributeMarshalling from '../../src/AttributeMarshalling';
 import XTagExtensions from './XTagExtensions';
 
 /*
- * A framework base class can start with ExtensibleElement, and extend it with
- * just the features it wants. Alternativley, it could start with HTMLElement,
- * and combine that with Extensible itself.
+ * A framework base class can start with HTMLElement, add in extensibility,
+ * plus any other features it wants to bake in. (Alternatively, it could start
+ * a common extensible HTML element class like src/ExtensibleElement.js.)
  *
   * Here, the hypothetical framework uses two standard extension classes
  * for template stamping and attribute marshalling, and adds a custom extension
  * for some XTag-style features. By design, this omits automatic node finding,
  * just to show that it's possible to leave out extensions if that's desired.
  */
-export let Element = ExtensibleElement.extend(
-  TemplateStamping,
-  AttributeMarshalling,
-  XTagExtensions
+export let Element = Extensible.extend(
+  HTMLElement,            // the base functionality
+  Extensible,             // add extensibility
+  TemplateStamping,       // add shadow root creation and template support
+  AttributeMarshalling,   // add marshaling of attributes to properties
+  XTagExtensions          // add some X-Tag specific features like "events"
 );
 
 /*
