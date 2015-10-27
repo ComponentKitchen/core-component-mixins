@@ -28,7 +28,8 @@ export let Element = ExtensibleElement.extend(
  * custom constructor that extends that base class.
  */
 export function register(tag, prototype) {
-  let Subclass = Element.extend(prototype);
+  let mixins = prototype.mixins || []; // Support a declarative "mixins" key.
+  let Subclass = Element.extend(prototype, ...mixins);
   document.registerElement(tag, Subclass);
   return Subclass;
 }
