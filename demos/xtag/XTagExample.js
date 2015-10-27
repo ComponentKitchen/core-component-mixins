@@ -13,7 +13,7 @@ xtag.register('xtag-example', {
   `,
 
   events: {
-    click: () => {
+    click: function() {
       alert('Clicked');
     }
   }
