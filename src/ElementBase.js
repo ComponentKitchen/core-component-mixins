@@ -1,8 +1,7 @@
 /*
- * General-purpose base class for defining custom elements.
- *
- * This ElementBase class implements template stamping into a shadow root,
- * and marshalling between attributes and properties.
+ * A sample general-purpose base class for defining custom elements that mixes
+ * in some common features: template stamping into a shadow root, automatic node
+ * finding, and marshalling between attributes and properties.
  */
 
 import ExtensibleElement from './ExtensibleElement';
@@ -20,7 +19,7 @@ class ElementBase extends ExtensibleElement {
 }
 
 ElementBase = ElementBase.extend(
-  TemplateStamping,
+  TemplateStamping, // before node finding, so shadow root is populated
   AutomaticNodeFinding, // before marshalling, so marshalled properties can use it
   AttributeMarshalling
 );

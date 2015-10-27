@@ -9,7 +9,10 @@ import XTagExtensions from './XTagExtensions';
 
 /*
  * A framework base class can start with ExtensibleElement, and extend it with
- * just the features it wants. Here it uses two standard extension classes
+ * just the features it wants. Alternativley, it could start with HTMLElement,
+ * and combine that with Extensible itself.
+ *
+  * Here, the hypothetical framework uses two standard extension classes
  * for template stamping and attribute marshalling, and adds a custom extension
  * for some XTag-style features. By design, this omits automatic node finding,
  * just to show that it's possible to leave out extensions if that's desired.
