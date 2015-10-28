@@ -18,8 +18,6 @@ particularly its `class` and `super` keywords.
 multiple mixins/classes define a method with the same name, there should be a
 predictable way of invoking all of them in a well-known order.
 
-*** explain later ***
-
 
 Example
 -------
@@ -447,6 +445,15 @@ time; they're just a means of talking about the prototype chain. All
 prototype chain. By the time `obj.foo()` is encountered, that prototype chain
 includes Base's prototype, so `super.foo()` invokes Base' `foo()`
 implementation.
+
+For the Extensible system of mixins to work, mixins need to cooperate. Each
+mixin method implementation should generally take care to give the
+superclass(es) a chance to perform their work as well. This obviously requires
+mixin authors to do a little more work, and opens up the possibility of a mixin
+author forgetting to do so. In exchange, however, mixins end up with a system
+for resolving method name conflicts which is entirely standard to JavaScript,
+and not a proprietary system unique to any single framework.
+
 
 
 Checking for base implementation before invoking `super`
