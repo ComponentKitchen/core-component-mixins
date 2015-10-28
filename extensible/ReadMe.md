@@ -486,13 +486,14 @@ dynamic run-time modifications of the prototype chain. This means the `super`
 keyword can't be used with Extensible mixins transpiled to ES5.
 
 To allow method invocations up the prototype chain in ES5 (including ES6
-transpiled to ES5), Extensible provides a `super` instance method. This takes as
-its single argument a reference to the current mixin:
+transpiled to ES5), Extensible provides an alternate syntax. Instead of writing
+`super.<method>` in ES6, in ES5, the longer `this.<mixin>.super.<method>` can
+be used:
 
     class Mixin {
       foo() {
         let result = "Mixin";
-        let superFoo = this.super(Mixin).foo;
+        let superFoo = this.Mixin.super.foo;
         if (superFoo) {
           result += " " + superFoo();
         }
@@ -500,15 +501,27 @@ its single argument a reference to the current mixin:
       }
     }
 
-The result of calling `super` will be the prototype *on this particular
-prototype chain* which follows the indicated mixin. A single mixin can be used
-to extend multiple base classes, so the result of calling `this.super(Mixin)`
-above will depend on which base class was extended with Mixin to create `this`.
+This takes advantage of two features of Extensible-created classes/objects.
+First, when the mixin named `Mixin` is applied to create a new class, objects
+of that class will have a new corresponding property `this.Mixin` which refers
+to the specific point on this particular prototype chain at which Mixin was
+applied. Furthermore, objects of that class will also have a property called
+`this.super` that reference the prototype one step up on the prototype chain.
 
-Once `this.super()` returns a prototype, the desired method can be inspected to
-see if it exists and, if so, to invoke it. The above ES6 code can be safely
-transpiled to ES5. While this syntax is more verbose than the native ES6
-version, it's nevertheless helpful to be able to use Extensible mixins in ES5.
+These two references can be combined as shown above: `this.Mixin.super.foo`.
+That means: "Get the prototype that was created when Mixin was applied, go one
+step up to the superclass, and get its foo method". That is, get the superclass'
+implementation of `foo`.
+
+Importantly, these mixin-named properties and the `super` property are
+specific to an object's particular prototype chain. A single mixin can be used
+to extend multiple base classes, so the result of calling `this.Mixin.super`
+will always give the correct result relative to the object in question.
+
+Once `super` returns a prototype, the desired method can be inspected to see if
+it exists and, if so, to invoke it. The above ES6 code can be safely transpiled
+to ES5. While this syntax is more verbose than the native ES6 version, it's
+nevertheless helpful to be able to use Extensible mixins in ES5.
 
 
 Composition vs inheritance
