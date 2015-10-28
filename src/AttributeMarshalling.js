@@ -8,7 +8,7 @@ class AttributeMarshalling {
    * Handle a change to the attribute with the given name.
    */
   attributeChangedCallback(name, oldValue, newValue) {
-    let base = this.super(AttributeMarshalling).attributeChangedCallback;
+    let base = this.AttributeMarshalling.super.attributeChangedCallback;
     if (base) {
       base.call(this);
     }
@@ -26,7 +26,7 @@ class AttributeMarshalling {
   }
 
   createdCallback() {
-    let base = this.super(AttributeMarshalling).createdCallback;
+    let base = this.AttributeMarshalling.super.createdCallback;
     if (base) {
       base.call(this);
     }

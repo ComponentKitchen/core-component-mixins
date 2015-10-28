@@ -32,12 +32,12 @@ class Extensible {
    * "super" keyword instead, but that won't work in transpiled ES6-to-ES5
    * (e.g., via Babel).
    */
-  super(extension) {
-    // TODO: Maintain this lookup in a Map instead of having to walk up the
-    // prototype chain each time.
-    let prototype = getPrototypeImplementingExtension(this, extension);
-    return prototype && Object.getPrototypeOf(prototype);
-  }
+  // super(extension) {
+  //   // TODO: Maintain this lookup in a Map instead of having to walk up the
+  //   // prototype chain each time.
+  //   let prototype = getPrototypeImplementingExtension(this, extension);
+  //   return prototype && Object.getPrototypeOf(prototype);
+  // }
 
   /*
    * Return a subclass of the current class that includes the members indicated
@@ -71,6 +71,9 @@ class Extensible {
   }
 
 }
+
+// By default, Extensible objects inherit from Object.
+Extensible.prototype.super = Object.prototype;
 
 
 /*
@@ -134,7 +137,12 @@ function extend(base, extension) {
 
   // Remember which extension was used to create this new class so that extended
   // methods can call implementations in the super (base) class.
-  extensionForPrototype.set(result.prototype, extension);
+  // extensionForPrototype.set(result.prototype, extension);
+  
+  if (extension.name && baseIsClass) {
+    result.prototype[extension.name] = result.prototype;
+    result.prototype.super = base.prototype;
+  }
 
   return result;
 }

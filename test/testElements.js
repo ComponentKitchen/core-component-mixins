@@ -49,7 +49,7 @@ document.registerElement('element-with-camel-case-property', ElementWithCamelCas
 /* Extension that defines a createdCallback method. */
 class CreatedExtension {
   createdCallback() {
-    let base = this.super(CreatedExtension).createdCallback;
+    let base = this.CreatedExtension.super.createdCallback;
     if (base) {
       base.call(this);
     }
