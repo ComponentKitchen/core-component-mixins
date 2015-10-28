@@ -3,41 +3,7 @@
  */
 
 
-/*
- * A mapping of class prototypes to the corresponding extension that was used
- * to implement the extension. This is used by the super(extension, method)
- * facility that lets extension invoke superclass methods.
- *
- * NOTE: This map uses class prototypes, not classes themselves, as the keys.
- * This is done to support web components as extensible HTMLElement classes.
- * The document.createElement('custom-element') function can return an element
- * whose constructor is *not* the function passed to document.registerElement().
- * That is, element classes have a special munged constructor, and that
- * constructor can't get included in our map. We use prototypes instead, which
- * are left alone by document.registerElement().
- */
-let extensionForPrototype = new Map();
-
-
 class Extensible {
-
-  /*
-   * Return the prototype that's above the one that implemented the given
-   * extension in the prototype chain.
-   *
-   * This is used in ES5-compatible extensions to invoke base property/method
-   * implementations, regardless of where the extension ended up in the
-   * prototype chain. This can be used by ES5 extensions or transpiled
-   * ES6-to-ES5 extensions. Pure ES6 extensions can make simple use of the
-   * "super" keyword instead, but that won't work in transpiled ES6-to-ES5
-   * (e.g., via Babel).
-   */
-  // super(extension) {
-  //   // TODO: Maintain this lookup in a Map instead of having to walk up the
-  //   // prototype chain each time.
-  //   let prototype = getPrototypeImplementingExtension(this, extension);
-  //   return prototype && Object.getPrototypeOf(prototype);
-  // }
 
   /*
    * Return a subclass of the current class that includes the members indicated
@@ -72,7 +38,44 @@ class Extensible {
 
 }
 
-// By default, Extensible objects inherit from Object.
+/*
+ * All Extensible-created objects keep references to the extensions that were
+ * applied to create them. When a *named* extension is applied to the prototype
+ * chain, the resulting object (or, for a class, the class' prototype) will
+ * have a new member with that name that points back to the same object.
+ * That facility is useful when dealing with chains that have been extended
+ * more than once, as an extension's name is sufficient to retrieve a reference
+ * to that point in the prototype chain.
+ *
+ * A single extension can be applied to multiple prototype chains -- the name
+ * refers to the prototype on *this particular prototype chain* that was added
+ * for that extension. This lets extension/mixin code get back to its own
+ * prototype, most often in combination with "super" (see below) in order to
+ * invoke superclass behavior.
+ */
+Extensible.prototype.Extensible = Extensible.prototype;
+
+/*
+ * All Extensible-created objects have a "super" property that references the
+ * prototype above them in the prototype chain.
+ *
+ * This "super" reference is used as a replacement for ES6's "super" keyword in
+ * in ES5 (or transpiled ES6) extensions/mixins
+ * that want to invoke superclass behavior, where the specific superclass will
+ * depend upon which extensions have been applied to a given prototype chain.
+ *
+ * E.g.:
+ *   class Mixin {
+ *     foo() {
+ *       if (this.Mixin.super.foo) {
+ *         this.Mixin.super.foo.call(this); // Invoke superclass' foo()
+ *       }
+ *       // Do Mixin-specific work here...
+ *     }
+ *   }
+ *
+ * For consistency, Extensible itself records its own superclass as Object.
+ */
 Extensible.prototype.super = Object.prototype;
 
 
@@ -117,47 +120,42 @@ function extend(base, extension) {
     // Extend a plain object by creating another plain object.
     Object.create(base);
 
+  let source;
+  let target;
   if (baseIsClass && extensionIsClass) {
     // Extending a class with a class.
-    // Copy both static and instance methods.
+    // We'll copy instance members in a moment, but first copy static members.
     copyOwnProperties(extension, result, Object.getOwnPropertyNames(Function));
-    copyOwnProperties(extension.prototype, result.prototype, ['constructor']);
+    source = extension.prototype;
+    target = result.prototype;
   } else if (!baseIsClass && extensionIsClass) {
     // Extending a plain object with a class.
     // Copy prototype methods directly to result.
-    copyOwnProperties(extension.prototype, result, ['constructor']);
+    source = extension.prototype;
+    target = result;
   } else if (baseIsClass && !extensionIsClass) {
     // Extending class with plain object.
     // Copy extension to result prototype.
-    copyOwnProperties(extension, result.prototype);
+    source = extension;
+    target = result.prototype;
   } else {
     // Extending a plain object with a plain object.
-    copyOwnProperties(extension, result);
+    source = extension;
+    target = result;
   }
+  copyOwnProperties(source, target, ['constructor']);
 
-  // Remember which extension was used to create this new class so that extended
-  // methods can call implementations in the super (base) class.
-  // extensionForPrototype.set(result.prototype, extension);
-  
-  if (extension.name && baseIsClass) {
-    result.prototype[extension.name] = result.prototype;
-    result.prototype.super = base.prototype;
+  if (extension.name) {
+    // Use the extension's name (usually the name of a class' constructor) to
+    // save a reference back to the newly-created object in the prototype chain.
+    target[extension.name] = target;
+    
+    // Save a reference to the superclass/super-object. See the comments on
+    // Extensible's "super" property.
+    target.super = baseIsClass ? base.prototype : base;
   }
 
   return result;
-}
-
-/*
- * Return the prototype for the class/object that implemented the indicated
- * extension for the given object.
- */
-function getPrototypeImplementingExtension(obj, extension) {
-  for (let prototype = obj; prototype !== null; prototype = Object.getPrototypeOf(prototype)) {
-    if (extensionForPrototype.get(prototype) === extension) {
-      return prototype;
-    }
-  }
-  return null;
 }
 
 
