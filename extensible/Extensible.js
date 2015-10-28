@@ -33,6 +33,8 @@ class Extensible {
    * (e.g., via Babel).
    */
   super(extension) {
+    // TODO: Maintain this lookup in a Map instead of having to walk up the
+    // prototype chain each time.
     let prototype = getPrototypeImplementingExtension(this, extension);
     return prototype && Object.getPrototypeOf(prototype);
   }
