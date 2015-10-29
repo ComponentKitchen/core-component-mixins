@@ -67,8 +67,8 @@ Extensible.prototype.Extensible = Extensible.prototype;
  * E.g.:
  *   class Mixin {
  *     foo() {
- *       if (this.Mixin.super.foo) {
- *         this.Mixin.super.foo.call(this); // Invoke superclass' foo()
+ *       if (this.Mixin._super.foo) {
+ *         this.Mixin._super.foo.call(this); // Invoke superclass' foo()
  *       }
  *       // Do Mixin-specific work here...
  *     }
@@ -76,7 +76,7 @@ Extensible.prototype.Extensible = Extensible.prototype;
  *
  * For consistency, Extensible itself records its own superclass as Object.
  */
-Extensible.prototype.super = Object.prototype;
+Extensible.prototype._super = Object.prototype;
 
 
 /*
@@ -99,8 +99,8 @@ function copyOwnProperties(source, target, ignorePropertyNames = []) {
 function extend(base, extension) {
 
   // Check whether the base and extension are classes or plain objects.
-  let baseIsClass = (typeof base === 'function');
-  let extensionIsClass = (typeof extension === 'function');
+  let baseIsClass = isClass(base);
+  let extensionIsClass = isClass(extension);
 
   // Check to see if the *extension* has a base class/prototype of its own.
   let extensionBase = extensionIsClass ?
@@ -149,13 +149,24 @@ function extend(base, extension) {
     // Use the extension's name (usually the name of a class' constructor) to
     // save a reference back to the newly-created object in the prototype chain.
     target[extension.name] = target;
-    
+
     // Save a reference to the superclass/super-object. See the comments on
     // Extensible's "super" property.
-    target.super = baseIsClass ? base.prototype : base;
+    target._super = baseIsClass ? base.prototype : base;
   }
 
   return result;
+}
+
+// Return true if c is a JavaScript class.
+// We use this test because, on WebKit, classes like HTMLElement are special,
+// and are not instances of Function. To handle that case, we use a looser
+// definition: an object is a class if it has a prototype, and that prototype
+// has a constructor that is the original object. This condition holds true even
+// for HTMLElement on WebKit.
+function isClass(c) {
+  return typeof c === 'function' ||                   // Standard
+      (c.prototype && c.prototype.constructor === c); // HTMLElement in WebKit
 }
 
 

@@ -494,13 +494,13 @@ keyword can't be used with Extensible mixins transpiled to ES5.
 
 To allow method invocations up the prototype chain in ES5 (including ES6
 transpiled to ES5), Extensible provides an alternate syntax. Instead of writing
-`super.<method>` in ES6, in ES5, the longer `this.<mixin>.super.<method>` can
+`super.<method>` in ES6, in ES5, the longer `this.<mixin>._super.<method>` can
 be used:
 
     class Mixin {
       foo() {
         let result = "Mixin";
-        let superFoo = this.Mixin.super.foo;
+        let superFoo = this.Mixin._super.foo;
         if (superFoo) {
           result += " " + superFoo();
         }
@@ -515,7 +515,7 @@ to the specific point on this particular prototype chain at which Mixin was
 applied. Furthermore, objects of that class will also have a property called
 `this.super` that reference the prototype one step up on the prototype chain.
 
-These two references can be combined as shown above: `this.Mixin.super.foo`.
+These two references can be combined as shown above: `this.Mixin._super.foo`.
 That means: "Get the prototype that was created when Mixin was applied, go one
 step up to the superclass, and get its foo method". That is, get the superclass'
 implementation of `foo`.
