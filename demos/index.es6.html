@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+  <title>ElementBase test</title>
+
+  <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
+
+  <!--
+  Try to directly load GreetElement as a real EC6 module.
+  Doesn't appear to work, e.g., in Safari 9.
+  -->
+  <script src="GreetElement.js" type="module"></script>
+
+</head>
+
+<body>
+  <greet-element>world</greet-element>
+  <greet-element punctuation="!">web components</greet-element>
+</body>
+
+</html>
