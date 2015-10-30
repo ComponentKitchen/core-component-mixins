@@ -6,7 +6,7 @@
 class AutomaticNodeFinding {
 
   createdCallback() {
-    let base = this.AutomaticNodeFinding._super.createdCallback;
+    let base = this.AutomaticNodeFinding.super.createdCallback;
     if (base) {
       base.call(this);
     }

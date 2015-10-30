@@ -14,7 +14,7 @@ class TemplateStamping {
    */
   createdCallback() {
     // this.log("created");
-    let base = this.TemplateStamping._super.createdCallback;
+    let base = this.TemplateStamping.super.createdCallback;
     if (base) {
       base();
     }

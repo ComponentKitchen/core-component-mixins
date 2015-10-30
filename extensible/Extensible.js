@@ -67,8 +67,8 @@ Extensible.prototype.Extensible = Extensible.prototype;
  * E.g.:
  *   class Mixin {
  *     foo() {
- *       if (this.Mixin._super.foo) {
- *         this.Mixin._super.foo.call(this); // Invoke superclass' foo()
+ *       if (this.Mixin.super.foo) {
+ *         this.Mixin.super.foo.call(this); // Invoke superclass' foo()
  *       }
  *       // Do Mixin-specific work here...
  *     }
@@ -76,7 +76,7 @@ Extensible.prototype.Extensible = Extensible.prototype;
  *
  * For consistency, Extensible itself records its own superclass as Object.
  */
-Extensible.prototype._super = Object.prototype;
+Extensible.prototype.super = Object.prototype;
 
 
 /*
@@ -164,7 +164,7 @@ function extend(base, extension) {
 
     // Save a reference to the superclass/super-object. See the comments on
     // Extensible's "super" property.
-    target._super = baseIsClass ? base.prototype : base;
+    target.super = baseIsClass ? base.prototype : base;
   }
 
   return result;

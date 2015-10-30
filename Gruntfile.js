@@ -11,7 +11,7 @@ module.exports = function (grunt) {
     browserify: {
       options: {
         browserifyOptions: {
-          debug: false // true
+          debug: true
         },
         transform: [['babelify']]
       },
@@ -27,7 +27,7 @@ module.exports = function (grunt) {
       },
       test: {
         files: {
-          'build/tests.js': 'test/Extensible.tests.js'
+          'build/tests.js': 'test/*.tests.js'
         }
       }
     },
