@@ -8,7 +8,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "web-component-tester": "^3.3.26"
+    "web-component-tester": "^3.3.26",
+    "webcomponentsjs": "^0.7.15"
   },
   "jshintConfig": {
     "esnext": true

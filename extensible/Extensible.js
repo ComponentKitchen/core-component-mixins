@@ -92,6 +92,7 @@ function copyOwnProperties(source, target, ignorePropertyNames = []) {
   return target;
 }
 
+
 /*
  * Return a new subclass/object that extends the given base class/object with
  * the members of the indicated extension.
@@ -114,11 +115,22 @@ function extend(base, extension) {
     base = extend(base, extensionBase);
   }
 
-  let result = baseIsClass ?
-    // Extend a real class by creating a subclass.
-    class subclass extends base {} :
-    // Extend a plain object by creating another plain object.
-    Object.create(base);
+  // Create the extended object we're going to return as a result.
+  let result;
+  if (baseIsClass) {
+    // Create a subclass of base. Once WebKit supports HTMLElement as a real
+    // class, we can just say:
+    //
+    //   class subclass extends base {}
+    //
+    // However, until that's resolved, we have to construct the class ourselves.
+    result = function subclass() {};
+    Object.setPrototypeOf(result, base);
+    Object.setPrototypeOf(result.prototype, base.prototype);
+  } else {
+    // Create a plain object that simply uses the base as a prototype.
+    result = Object.create(base);
+  }
 
   let source;
   let target;
