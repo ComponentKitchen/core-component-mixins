@@ -18,7 +18,7 @@ import XTagExtensions from './XTagExtensions';
  * for some XTag-style features. By design, this omits automatic node finding,
  * just to show that it's possible to leave out extensions if that's desired.
  */
-export let Element = Extensible.extend(
+export let Element = Extensible.extend.call(
   HTMLElement,            // the base functionality
   Extensible,             // add extensibility
   TemplateStamping,       // add shadow root creation and template support
