@@ -3,7 +3,7 @@
  * See https://www.polymer-project.org/1.0/docs/devguide/local-dom.html#node-finding.
  */
 
-class AutomaticNodeFinding {
+export default class AutomaticNodeFinding {
 
   createdCallback() {
     let base = this.AutomaticNodeFinding.super.createdCallback;
@@ -21,5 +21,3 @@ class AutomaticNodeFinding {
   }
 
 }
-
-export default AutomaticNodeFinding;

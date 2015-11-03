@@ -6,7 +6,7 @@
 import ElementBase from '../src/ElementBase';
 
 /* Define a custom element. */
-class GreetElement extends ElementBase {
+export default class GreetElement extends ElementBase {
 
   // Define a "punctuation" attribute.
   // This uses the this.$ references created by the AutomaticNodeFinding mixin.
@@ -30,5 +30,3 @@ class GreetElement extends ElementBase {
 }
 
 document.registerElement('greet-element', GreetElement);
-
-export default GreetElement;

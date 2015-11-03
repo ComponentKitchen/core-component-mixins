@@ -3,7 +3,7 @@
  *
  */
 
-class XTagExtensions {
+export default class XTagExtensions {
 
   /*
    * Demonstrate a very basic XTag-style system for defining event handlers in
@@ -31,5 +31,3 @@ class XTagExtensions {
   }
 
 }
-
-export default XTagExtensions;
