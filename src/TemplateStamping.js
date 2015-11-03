@@ -3,10 +3,13 @@
  * property (as a string or referencing a HTML template), when the component
  * class is instantiated, a shadow root will be created on the instance, and
  * the contents of the template will be cloned into the shadow root.
+ *
+ * For the time being, this extension retains support for Shadow DOM v0.
+ * That will eventually be deprecated as browsers implement Shadow DOM v1.
  */
 
 
-class TemplateStamping {
+export default class TemplateStamping {
 
   /*
    * If the component defines a template, a shadow root will be created on the
@@ -23,15 +26,24 @@ class TemplateStamping {
       // Upgrade plain string to real template.
       template = createTemplateWithInnerHTML(template);
     }
+    if (USING_SHADOW_DOM_V0) {
+      polyfillSlotWithContent(template);
+    }
     if (template) {
       // this.log("cloning template into shadow root");
-      let root = this.createShadowRoot();
+      let root = USING_SHADOW_DOM_V0 ?
+        this.createShadowRoot() :             // Shadow DOM v0
+        this.attachShadow({ mode: 'open' });  // Shadow DOM v1
       let clone = document.importNode(template.content, true);
       root.appendChild(clone);
     }
   }
 
 }
+
+
+// Feature detection for old Shadow DOM v0.
+const USING_SHADOW_DOM_V0 = (typeof HTMLElement.prototype.createShadowRoot !== 'undefined');
 
 
 /*
@@ -50,4 +62,13 @@ function createTemplateWithInnerHTML(innerHTML) {
   return template;
 }
 
-export default TemplateStamping;
+/*
+ * Replace occurences of v1 slot elements with v0 content elements.
+ * This does not yet map named slots to content select clauses.
+ */
+function polyfillSlotWithContent(template) {
+  [].forEach.call(template.content.querySelectorAll('slot'), slotElement => {
+    let contentElement = document.createElement('content');
+    slotElement.parentNode.replaceChild(contentElement, slotElement);
+  });
+}

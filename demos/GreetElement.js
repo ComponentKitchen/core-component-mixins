@@ -23,7 +23,7 @@ class GreetElement extends ElementBase {
   get template() {
     return `
       Hello,
-      <content></content><span id="punctuation">.</span>
+      <slot></slot><span id="punctuation">.</span>
     `;
   }
 
