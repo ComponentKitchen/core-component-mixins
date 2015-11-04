@@ -135,9 +135,20 @@ function extend(base, extension) {
   let source;
   let target;
   if (baseIsClass && extensionIsClass) {
+    // Properties defined by Function.
+    // We'd prefer to get by interrogating Function itself, but WebKit functions
+    // have some properties (arguments and caller) which are not returned by
+    // Object.getOwnPropertyNames(Function).
+    const FUNCTION_PROPERTIES = [
+      'arguments',
+      'caller',
+      'length',
+      'name',
+      'prototype'
+    ];
     // Extending a class with a class.
     // We'll copy instance members in a moment, but first copy static members.
-    copyOwnProperties(extension, result, Object.getOwnPropertyNames(Function));
+    copyOwnProperties(extension, result, FUNCTION_PROPERTIES);
     source = extension.prototype;
     target = result.prototype;
   } else if (!baseIsClass && extensionIsClass) {

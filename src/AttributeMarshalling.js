@@ -12,15 +12,10 @@ export default class AttributeMarshalling {
     if (base) {
       base.call(this);
     }
-    // this.log(`attribute ${name} changed to ${newValue}`);
     // If the attribute name corresponds to a property name, then set that
-    // property.
-    // TODO: This looks up the existence of the property each time. It would
-    // be more efficient to, e.g., do a one-time computation of all properties
-    // defined by the element (including base classes).
-    // TODO: Ignore standard attribute name.
+    // property. Ignore changes in standard HTMLElement properties.
     let propertyName = attributeToPropertyName(name);
-    if (hasProperty(this, propertyName)) {
+    if (propertyName in this && !(propertyName in HTMLElement.prototype)) {
       this[propertyName] = newValue;
     }
   }
@@ -42,16 +37,6 @@ export default class AttributeMarshalling {
 function attributeToPropertyName(attributeName) {
   let propertyName = attributeName.replace(/-([a-z])/g, m => m[1].toUpperCase());
   return propertyName;
-}
-
-function hasProperty(obj, name) {
-  if (!obj) {
-    return false;
-  } else if (obj.hasOwnProperty(name)) {
-    return true;
-  } else {
-    return hasProperty(Object.getPrototypeOf(obj), name);
-  }
 }
 
 // Convert hyphenated foo-bar name to camel case fooBar.
