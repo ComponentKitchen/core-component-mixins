@@ -26,7 +26,7 @@ export default class TemplateStamping {
       // Upgrade plain string to real template.
       template = createTemplateWithInnerHTML(template);
     }
-    if (USING_SHADOW_DOM_V0) {
+    if (template && USING_SHADOW_DOM_V0) {
       polyfillSlotWithContent(template);
     }
     if (template) {
