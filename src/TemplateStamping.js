@@ -29,6 +29,9 @@ export default class TemplateStamping {
     if (template && USING_SHADOW_DOM_V0) {
       polyfillSlotWithContent(template);
     }
+    if (window.ShadowDOMPolyfill) {
+      shimTemplateStyles(template, this.localName);
+    }
     if (template) {
       // this.log("cloning template into shadow root");
       let root = USING_SHADOW_DOM_V0 ?
@@ -46,9 +49,7 @@ export default class TemplateStamping {
 const USING_SHADOW_DOM_V0 = (typeof HTMLElement.prototype.createShadowRoot !== 'undefined');
 
 
-/*
- * Convert a plain string of HTML into a real template element.
- */
+// Convert a plain string of HTML into a real template element.
 function createTemplateWithInnerHTML(innerHTML) {
   let template = document.createElement('template');
   // REVIEW: Is there an easier way to do this?
@@ -62,13 +63,16 @@ function createTemplateWithInnerHTML(innerHTML) {
   return template;
 }
 
-/*
- * Replace occurences of v1 slot elements with v0 content elements.
- * This does not yet map named slots to content select clauses.
- */
+// Replace occurences of v1 slot elements with v0 content elements.
+// This does not yet map named slots to content select clauses.
 function polyfillSlotWithContent(template) {
   [].forEach.call(template.content.querySelectorAll('slot'), slotElement => {
     let contentElement = document.createElement('content');
     slotElement.parentNode.replaceChild(contentElement, slotElement);
   });
+}
+
+// Invoke basic style shimming with ShadowCSS.
+function shimTemplateStyles(template, tag) {
+  WebComponents.ShadowCSS.shimStyling(template.content, tag);
 }
