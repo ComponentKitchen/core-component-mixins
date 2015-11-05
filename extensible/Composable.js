@@ -36,6 +36,28 @@ class Composable {
     return mixins.reduce(compose, this);
   }
 
+  static composeWithBase(target, key, descriptor) {
+    let mixinImplementation = descriptor.value;
+    let mixinName = target.constructor.name;
+    descriptor.value = function(...args) {
+      let baseImplementation = this[mixinName].super[key];
+      if (baseImplementation) {
+        baseImplementation.apply(this, args);
+      }
+      return mixinImplementation.apply(this, args);
+    }
+  }
+
+  static decorate(decorators) {
+    let prototype = this.prototype;
+    for (let key in decorators) {
+      let decorator = decorators[key];
+      let descriptor = Object.getOwnPropertyDescriptor(prototype, key);
+      decorator(prototype, key, descriptor);
+      Object.defineProperty(prototype, key, descriptor);
+    }
+  }
+
 }
 
 /*

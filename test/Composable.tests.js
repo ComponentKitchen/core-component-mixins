@@ -36,6 +36,17 @@ class MethodMixinCallsSuper {
   }
 }
 
+/* Mixin that uses decorator to request composition with base implementation */
+class MethodMixinComposed {
+  method() {
+    this.mixinMethodInvoked = true;
+    return 'MethodMixinComposed';
+  }
+}
+Composable.decorate.call(MethodMixinComposed, {
+  method: Composable.composeWithBase
+});
+
 
 suite("Composable", () => {
 
@@ -59,6 +70,19 @@ suite("Composable", () => {
     assert.equal(instance.bar, true);
   });
 
+  test("class decorators applied to indicated members", () => {
+    class Base extends Composable {
+      method() {}
+    }
+    function decorator(target, key, descriptor) {
+      descriptor.value.decorated = true;
+    }
+    Base.decorate({
+      method: decorator
+    });
+    assert(Base.prototype.method.decorated);
+  })
+
   test("class mixin can define a property", () => {
     let Subclass = ExampleBase.compose(PropertyMixin);
     let instance = new Subclass();
@@ -73,15 +97,20 @@ suite("Composable", () => {
     assert(instance.mixinMethodInvoked);
   });
 
-  test("both mixin and base method implementations are invoked", () => {
-
-  });
-
   test("mixin method can use super() to invoke base class implementation", () => {
     let Subclass = ExampleBase.compose(MethodMixinCallsSuper);
     let instance = new Subclass();
     let result = instance.method();
     assert.equal(result, 'ExampleBase');
+    assert(instance.mixinMethodInvoked);
+    assert(instance.baseMethodInvoked);
+  });
+
+  test("mixin can use decorator to invoke base class implementation", () => {
+    let Subclass = ExampleBase.compose(MethodMixinComposed);
+    let instance = new Subclass();
+    let result = instance.method();
+    assert.equal(result, 'MethodMixinComposed');
     assert(instance.mixinMethodInvoked);
     assert(instance.baseMethodInvoked);
   });
