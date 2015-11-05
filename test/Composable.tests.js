@@ -5,7 +5,8 @@ import Composable from "../extensible/Composable";
 
 /* A simple base class */
 class ExampleBase extends Composable {
-  foo() {
+  method() {
+    this.baseMethodInvoked = true;
     return 'ExampleBase';
   }
 }
@@ -20,9 +21,17 @@ class PropertyMixin {
 /* Mixin that defines a method */
 class MethodMixin {
   method() {
-    let superMethod = this.MethodMixin.super.method;
-    let result = superMethod ? superMethod.call(this) : 'extension result';
-    this.extensionMethodInvoked = true;
+    this.mixinMethodInvoked = true;
+    return 'MethodMixin';
+  }
+}
+
+/* Mixin with method that invokes and return base implementation if present */
+class MethodMixinCallsSuper {
+  method() {
+    let base = this.MethodMixinCallsSuper.super.method;
+    let result = base ? base.call(this) : 'MethodMixin';
+    this.mixinMethodInvoked = true;
     return result;
   }
 }
@@ -37,7 +46,7 @@ suite("Composable", () => {
       }
     }
     let instance = new Subclass();
-    assert.equal(instance.foo(), 'ExampleBase');
+    assert.equal(instance.method(), 'ExampleBase');
     assert.equal(instance.bar, true);
   });
 
@@ -46,40 +55,38 @@ suite("Composable", () => {
       bar: true
     });
     let instance = new Subclass();
-    assert.equal(instance.foo(), 'ExampleBase');
+    assert.equal(instance.method(), 'ExampleBase');
     assert.equal(instance.bar, true);
   });
 
-  test("class extension can define a property", () => {
+  test("class mixin can define a property", () => {
     let Subclass = ExampleBase.compose(PropertyMixin);
     let instance = new Subclass();
     assert.equal(instance.property, 'value');
   });
 
-  test("class extension can define a method", () => {
+  test("class mixin can define a method", () => {
     let Subclass = ExampleBase.compose(MethodMixin);
     let instance = new Subclass();
     let result = instance.method();
-    assert.equal(result, 'extension result');
-    assert(instance.extensionMethodInvoked);
+    assert.equal(result, 'MethodMixin');
+    assert(instance.mixinMethodInvoked);
   });
 
-  test("extension method can use super() to invoke base class implementation", () => {
-    class Subclass extends ExampleBase {
-      method() {
-        this.baseMethodInvoked = true;
-        return 'base result';
-      }
-    }
-    Subclass = Subclass.compose(MethodMixin);
+  test("both mixin and base method implementations are invoked", () => {
+
+  });
+
+  test("mixin method can use super() to invoke base class implementation", () => {
+    let Subclass = ExampleBase.compose(MethodMixinCallsSuper);
     let instance = new Subclass();
     let result = instance.method();
-    assert.equal(result, 'base result');
-    assert(instance.extensionMethodInvoked);
+    assert.equal(result, 'ExampleBase');
+    assert(instance.mixinMethodInvoked);
     assert(instance.baseMethodInvoked);
   });
 
-  test("multiple extensions can be applied in one call", () => {
+  test("multiple mixins can be applied in one call", () => {
     let Subclass = ExampleBase.compose(
       PropertyMixin,
       MethodMixin
@@ -87,8 +94,8 @@ suite("Composable", () => {
     let instance = new Subclass();
     assert.equal(instance.property, 'value');
     let result = instance.method();
-    assert.equal(result, 'extension result');
-    assert(instance.extensionMethodInvoked);
+    assert.equal(result, 'MethodMixin');
+    assert(instance.mixinMethodInvoked);
   });
 
   test("can extend a plain object", () => {
@@ -97,49 +104,49 @@ suite("Composable", () => {
         return 'result';
       }
     };
-    let extension = {
+    let mixin = {
       property: 'value'
     };
-    let composed = Composable.compose.call(obj, extension);
+    let composed = Composable.compose.call(obj, mixin);
     assert.equal(composed.method(), 'result');
     assert.equal(composed.property, 'value');
   });
 
-  test("extension can has multiple levels of inheritance", () => {
+  test("mixin can has multiple levels of inheritance", () => {
     class MixinSubclass extends MethodMixin {
       method() {
         let superMethod = this.MixinSubclass.super.method;
         if (superMethod) {
           superMethod.call(this);
         }
-        this.extensionSubclassMethodInvoked = true;
+        this.mixinSubclassMethodInvoked = true;
       }
     }
     let Subclass = Composable.compose(MixinSubclass);
     let instance = new Subclass();
     instance.method();
-    assert(instance.extensionMethodInvoked);
-    assert(instance.extensionSubclassMethodInvoked);
+    assert(instance.mixinMethodInvoked);
+    assert(instance.mixinSubclassMethodInvoked);
   });
 
-  test("extension property can reference superclass' property", () => {
+  test("mixin property can reference superclass' property", () => {
     class PropertyMixin {
       get property() {
         let superPrototype = this.PropertyMixin.super;
         let descriptor = superPrototype && Object.getOwnPropertyDescriptor(superPrototype, 'property');
         return (descriptor) ?
           descriptor.get.call(this) :
-          'extension value';
+          'PropertyMixin';
       }
     }
     class Subclass extends Composable {
       get property() {
-        return 'base value';
+        return 'Subclass';
       }
     }
     Subclass = Subclass.compose(PropertyMixin);
     let instance = new Subclass();
-    assert.equal(instance.property, 'base value');
+    assert.equal(instance.property, 'Subclass');
   });
 
 });
