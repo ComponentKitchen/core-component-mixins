@@ -54,6 +54,30 @@ class Composable {
     return undefined; // Not found
   }
 
+  // Compose methods, invoking base implementation first. If it returns a
+  // truthy result, that is returned. Otherwise, the mixin implementation's
+  // result is returned.
+  static preferBaseResult(target, key, descriptor) {
+    let mixinImplementation = descriptor.value;
+    let baseImplementation = Object.getPrototypeOf(target)[key];
+    descriptor.value = function() {
+      return baseImplementation.apply(this, arguments)
+          || mixinImplementation.apply(this, arguments);
+    }
+  }
+
+  // Compose methods, invoking mixin implementation first. If it returns a
+  // truthy result, that is returned. Otherwise, the base implementation's
+  // result is returned.
+  static preferMixinResult(target, key, descriptor) {
+    let mixinImplementation = descriptor.value;
+    let baseImplementation = Object.getPrototypeOf(target)[key];
+    descriptor.value = function() {
+      return mixinImplementation.apply(this, arguments)
+          || baseImplementation.apply(this, arguments);
+    }
+  }
+
   // Default rule for composing methods: invoke base first, then mixin.
   static propagateFunction(target, key, descriptor) {
     let mixinImplementation = descriptor.value;
