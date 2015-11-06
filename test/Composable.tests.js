@@ -45,7 +45,7 @@ class MethodMixinOverride {
   }
 }
 Composable.decorate.call(MethodMixinOverride.prototype, {
-  method: Composable.rule(Composable.override)
+  method: Composable.rule(Composable.rules.override)
 });
 
 
@@ -60,7 +60,7 @@ class MethodMixinCallsSuper {
   }
 }
 Composable.decorate.call(MethodMixinCallsSuper.prototype, {
-  method: Composable.rule(Composable.override)
+  method: Composable.rule(Composable.rules.override)
 });
 
 
