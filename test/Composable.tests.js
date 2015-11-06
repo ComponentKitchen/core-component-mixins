@@ -44,7 +44,7 @@ class MethodMixinComposed {
   }
 }
 Composable.decorate.call(MethodMixinComposed.prototype, {
-  method: Composable.composeWithBase
+  method: Composable.rule(Composable.invokeBaseFirst)
 });
 
 
@@ -114,7 +114,7 @@ suite("Composable", () => {
     Subclass.prototype.decorate({
       method: Composable.rule(decorator)
     });
-    assert.equal(Subclass.prototype.method.rule, decorator);
+    assert.equal(Subclass.prototype.method._compositionRule, decorator);
   });
 
   test("mixin can use decorator to invoke base class implementation", () => {

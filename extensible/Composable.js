@@ -36,14 +36,12 @@ class Composable {
     return mixins.reduce(compose, this);
   }
 
-  static composeWithBase(target, key, descriptor) {
+  static invokeBaseFirst(target, key, descriptor) {
     let mixinImplementation = descriptor.value;
-    let mixinName = target.constructor.name;
+    let base = Object.getPrototypeOf(target);
+    let baseImplementation = base[key];
     descriptor.value = function(...args) {
-      let baseImplementation = this[mixinName].super[key];
-      if (baseImplementation) {
-        baseImplementation.apply(this, args);
-      }
+      baseImplementation.apply(this, args);
       return mixinImplementation.apply(this, args);
     }
   }
@@ -68,7 +66,8 @@ class Composable {
     // We return a decorator that just adds the decorator given above to the
     // member.
     return function(target, key, descriptor) {
-      descriptor.value.rule = decorator;
+      // TODO: Use a Symbol instead of a string property name to save this.
+      descriptor.value._compositionRule = decorator;
     }
   }
 
@@ -113,6 +112,22 @@ Composable.prototype.Composable = Composable.prototype;
  * For consistency, Composable itself records its own superclass as Object.
  */
 Composable.prototype.super = Object.prototype;
+
+
+function applyCompositionRules(obj) {
+  let base = Object.getPrototypeOf(obj);
+  Object.getOwnPropertyNames(obj).forEach(name => {
+    if (name in base) {
+      // Base also implements a member with the same name; need to combine.
+      let descriptor = Object.getOwnPropertyDescriptor(obj, name);
+      let rule = descriptor.value && descriptor.value._compositionRule;
+      if (rule) {
+        rule(obj, name, descriptor);
+        Object.defineProperty(obj, name, descriptor);
+      }
+    }
+  });
+}
 
 
 /*
@@ -203,6 +218,8 @@ function compose(base, mixin) {
     target = result;
   }
   copyOwnProperties(source, target, ['constructor']);
+
+  applyCompositionRules(target);
 
   if (mixin.name) {
     // Use the mixin's name (usually the name of a class' constructor) to
