@@ -21,6 +21,9 @@
     "test",
     "tests"
   ],
+  "browserify": {
+    "transform": ["babelify"]
+  },
   "jshintConfig": {
     "esnext": true
   }

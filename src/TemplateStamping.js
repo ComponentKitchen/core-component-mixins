@@ -32,6 +32,8 @@ export default class TemplateStamping {
     if (window.ShadowDOMPolyfill) {
       shimTemplateStyles(template, this.localName);
     }
+    // TODO: Save the processed template with the component's class prototype
+    // so it doesn't need to be processed with every instantiation.
     if (template) {
       // this.log("cloning template into shadow root");
       let root = USING_SHADOW_DOM_V0 ?
