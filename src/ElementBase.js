@@ -4,12 +4,12 @@
  * finding, and marshalling between attributes and properties.
  */
 
-import ExtensibleElement from './ExtensibleElement';
+import ComposableElement from './ComposableElement';
 import TemplateStamping from './TemplateStamping';
 import AutomaticNodeFinding from './AutomaticNodeFinding';
 import AttributeMarshalling from './AttributeMarshalling';
 
-class ElementBase extends ExtensibleElement {
+class ElementBase extends ComposableElement {
 
   /* For debugging */
   log(text) {
@@ -18,12 +18,10 @@ class ElementBase extends ExtensibleElement {
 
 }
 
-ElementBase = ElementBase.extend(
+export default ElementBase = ElementBase.compose(
   TemplateStamping, // before node finding, so shadow root is populated
   AutomaticNodeFinding, // before marshalling, so marshalled properties can use it
   AttributeMarshalling
 );
 
 document.registerElement('element-base', ElementBase);
-
-export default ElementBase;

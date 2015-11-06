@@ -16,11 +16,6 @@ export default class TemplateStamping {
    * component instance, and the template stamped into it.
    */
   createdCallback() {
-    // this.log("created");
-    let base = this.TemplateStamping.super.createdCallback;
-    if (base) {
-      base();
-    }
     let template = this.template;
     if (typeof template === 'string') {
       // Upgrade plain string to real template.

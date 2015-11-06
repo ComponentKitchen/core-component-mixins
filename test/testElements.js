@@ -21,8 +21,8 @@ class ElementWithRealTemplate extends ElementBase {
 document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 
-/* Element created via ES5-compatible .extend() */
-let Es5ClassViaExtend = ElementBase.extend({
+/* Element created via ES5-compatible .compose() */
+let Es5ClassViaExtend = ElementBase.compose({
   get customProperty() {
     return 'property';
   },
@@ -46,20 +46,16 @@ class ElementWithCamelCaseProperty extends ElementBase {
 document.registerElement('element-with-camel-case-property', ElementWithCamelCaseProperty);
 
 
-/* Extension that defines a createdCallback method. */
-class CreatedExtension {
+/* Mixin that defines a createdCallback method. */
+class CreatedMixin {
   createdCallback() {
-    let base = this.CreatedExtension.super.createdCallback;
-    if (base) {
-      base.call(this);
-    }
-    this.extensionCreatedCallbackInvoked = true;
+    this.mixinCallbackInvoked = true;
   }
 }
-class ElementWithCreatedExtension extends ElementBase {
+class ElementWithCreatedMixin extends ElementBase {
   get template() {
     return "Hello";
   }
 }
-ElementWithCreatedExtension = ElementWithCreatedExtension.extend(CreatedExtension);
-document.registerElement('element-with-created-extension', ElementWithCreatedExtension);
+ElementWithCreatedMixin = ElementWithCreatedMixin.compose(CreatedMixin);
+document.registerElement('element-with-created-mixin', ElementWithCreatedMixin);

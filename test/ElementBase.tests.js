@@ -29,8 +29,8 @@ suite("ElementBase", () => {
   });
 
   test("extension can define createdCallback", () => {
-    let element = document.createElement('element-with-created-extension');
-    assert(element.extensionCreatedCallbackInvoked);
+    let element = document.createElement('element-with-created-mixin');
+    assert(element.mixinCallbackInvoked);
     assert.equal(element.shadowRoot.textContent.trim(), "Hello");
   });
 

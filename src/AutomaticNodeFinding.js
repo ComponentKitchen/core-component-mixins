@@ -6,10 +6,6 @@
 export default class AutomaticNodeFinding {
 
   createdCallback() {
-    let base = this.AutomaticNodeFinding.super.createdCallback;
-    if (base) {
-      base.call(this);
-    }
     if (this.shadowRoot) {
       this.$ = {};
       var nodesWithIds = this.shadowRoot.querySelectorAll('[id]');

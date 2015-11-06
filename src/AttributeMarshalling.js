@@ -8,10 +8,6 @@ export default class AttributeMarshalling {
    * Handle a change to the attribute with the given name.
    */
   attributeChangedCallback(name, oldValue, newValue) {
-    let base = this.AttributeMarshalling.super.attributeChangedCallback;
-    if (base) {
-      base.call(this);
-    }
     // If the attribute name corresponds to a property name, then set that
     // property. Ignore changes in standard HTMLElement properties.
     let propertyName = attributeToPropertyName(name);
@@ -21,10 +17,6 @@ export default class AttributeMarshalling {
   }
 
   createdCallback() {
-    let base = this.AttributeMarshalling.super.createdCallback;
-    if (base) {
-      base.call(this);
-    }
     [].forEach.call(this.attributes, attribute => {
       this.attributeChangedCallback(attribute.name, undefined, attribute.value);
     });
