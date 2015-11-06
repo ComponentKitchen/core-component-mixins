@@ -71,6 +71,10 @@ class Composable {
     }
   }
 
+  // Combinator that causes a mixin method to override its base implementation.
+  // Since this the default behavior of the prototype chain, this is a no-op.
+  static override(target, key, descriptor) {}
+
 }
 
 /*
@@ -114,6 +118,12 @@ Composable.prototype.Composable = Composable.prototype;
 Composable.prototype.super = Object.prototype;
 
 
+Composable.prototype.compositionRules = {
+  constructor: Composable.override,
+  toString: Composable.override,
+};
+
+
 function applyCompositionRules(obj) {
   let base = Object.getPrototypeOf(obj);
   Object.getOwnPropertyNames(obj).forEach(name => {
@@ -121,7 +131,16 @@ function applyCompositionRules(obj) {
       // Base also implements a member with the same name; need to combine.
       let descriptor = Object.getOwnPropertyDescriptor(obj, name);
       let rule = descriptor.value && descriptor.value._compositionRule;
-      if (rule) {
+      if (!rule) {
+        // See if prototype chain has a rule for this member.
+        rule = obj.compositionRules[name];
+      }
+      if (!rule) {
+        rule = getDefaultCompositionRule(descriptor);
+      }
+      // "override" is a known no-op, so we don't bother trying to redefine the
+      // property.
+      if (rule && rule !== Composable.override) {
         rule(obj, name, descriptor);
         Object.defineProperty(obj, name, descriptor);
       }
@@ -160,7 +179,8 @@ function compose(base, mixin) {
     Object.getPrototypeOf(mixin);
   if (mixinBase &&
       mixinBase !== Function &&
-      mixinBase !== Object) {
+      mixinBase !== Object &&
+      mixinBase !== Object.prototype) {
     // The mixin itself derives from another class/object.
     // Recurse, and extend with the mixin's base first.
     base = compose(base, mixinBase);
@@ -232,6 +252,13 @@ function compose(base, mixin) {
   }
 
   return result;
+}
+
+function getDefaultCompositionRule(descriptor) {
+  if (typeof descriptor.value === 'function') {
+    return Composable.invokeBaseFirst;
+  }
+  return null;
 }
 
 // Return true if c is a JavaScript class.
