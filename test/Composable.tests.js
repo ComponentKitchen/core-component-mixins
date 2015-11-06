@@ -5,16 +5,27 @@ import Composable from "../extensible/Composable";
 
 /* A simple base class */
 class ExampleBase extends Composable {
+
+  get property() {
+    this.baseGetterInvoked = true;
+    return this._property;
+  }
+  set property(value) {
+    this._property = value;
+    this.baseSetterInvoked = true;
+  }
+
   method() {
     this.baseMethodInvoked = true;
     return 'ExampleBase';
   }
+
 }
 
-/* Mixin that defines a property */
+/* Mixin that augments a property setter. */
 class PropertyMixin {
-  get property() {
-    return 'value';
+  set property(value) {
+    this.mixinSetterInvoked = true;
   }
 }
 
@@ -89,9 +100,24 @@ suite("Composable", () => {
   })
 
   test("class mixin can define a property", () => {
+    // Make sure base class works as expected first.
+    let baseInstance = new ExampleBase();
+    assert(!baseInstance.baseGetterInvoked);
+    let baseValue = baseInstance.property;
+    assert.isUndefined(baseValue);
+    assert(baseInstance.baseGetterInvoked);
+
     let Subclass = ExampleBase.compose(PropertyMixin);
     let instance = new Subclass();
+    assert(!instance.baseGetterInvoked);
+    assert(!instance.baseSetterInvoked);
+    assert(!instance.mixinSetterInvoked);
+    instance.property = 'value';
+    assert(instance.baseSetterInvoked);
+    assert(instance.mixinSetterInvoked);
+    let result = instance.property;
     assert.equal(instance.property, 'value');
+    assert(instance.baseGetterInvoked);
   });
 
   test("class mixin can define a method; base method is invoked too", () => {
@@ -129,7 +155,11 @@ suite("Composable", () => {
       MethodMixin
     );
     let instance = new Subclass();
+    instance.property = 'value';
+    assert(instance.mixinSetterInvoked);
+    assert(instance.baseSetterInvoked);
     assert.equal(instance.property, 'value');
+    assert(instance.baseGetterInvoked);
     let result = instance.method();
     assert.equal(result, 'MethodMixin');
     assert(instance.mixinMethodInvoked);
