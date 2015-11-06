@@ -43,7 +43,7 @@ class MethodMixinComposed {
     return 'MethodMixinComposed';
   }
 }
-Composable.decorate.call(MethodMixinComposed, {
+Composable.decorate.call(MethodMixinComposed.prototype, {
   method: Composable.composeWithBase
 });
 
@@ -77,7 +77,7 @@ suite("Composable", () => {
     function decorator(target, key, descriptor) {
       descriptor.value.decorated = true;
     }
-    Base.decorate({
+    Base.prototype.decorate({
       method: decorator
     });
     assert(Base.prototype.method.decorated);
@@ -104,6 +104,17 @@ suite("Composable", () => {
     assert.equal(result, 'ExampleBase');
     assert(instance.mixinMethodInvoked);
     assert(instance.baseMethodInvoked);
+  });
+
+  test("rule() decorator just records a decorator for later use", () => {
+    class Subclass extends Composable {
+      method() {}
+    }
+    function decorator(target, key, descriptor) {}
+    Subclass.prototype.decorate({
+      method: Composable.rule(decorator)
+    });
+    assert.equal(Subclass.prototype.method.rule, decorator);
   });
 
   test("mixin can use decorator to invoke base class implementation", () => {

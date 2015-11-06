@@ -49,12 +49,26 @@ class Composable {
   }
 
   static decorate(decorators) {
-    let prototype = this.prototype;
     for (let key in decorators) {
       let decorator = decorators[key];
-      let descriptor = Object.getOwnPropertyDescriptor(prototype, key);
-      decorator(prototype, key, descriptor);
-      Object.defineProperty(prototype, key, descriptor);
+      let descriptor = Object.getOwnPropertyDescriptor(this, key);
+      decorator(this, key, descriptor);
+      Object.defineProperty(this, key, descriptor);
+    }
+  }
+
+  decorate(decorators) {
+    Composable.decorate.call(this, decorators);
+  }
+
+  // Decorate for annotating how a class member should be composed later.
+  // This takes a decorator that will be run at *composition* time.
+  // For now, this can only be applied to methods.
+  static rule(decorator) {
+    // We return a decorator that just adds the decorator given above to the
+    // member.
+    return function(target, key, descriptor) {
+      descriptor.value.rule = decorator;
     }
   }
 
