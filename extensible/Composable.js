@@ -40,9 +40,9 @@ class Composable {
     let mixinImplementation = descriptor.value;
     let base = Object.getPrototypeOf(target);
     let baseImplementation = base[key];
-    descriptor.value = function(...args) {
-      baseImplementation.apply(this, args);
-      return mixinImplementation.apply(this, args);
+    descriptor.value = function() {
+      baseImplementation.apply(this, arguments);
+      return mixinImplementation.apply(this, arguments);
     }
   }
 
