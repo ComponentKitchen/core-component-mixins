@@ -22,7 +22,7 @@ document.registerElement('element-with-real-template', ElementWithRealTemplate);
 
 
 /* Element created via ES5-compatible .compose() */
-let Es5ClassViaExtend = ElementBase.compose({
+let Es5Class = ElementBase.compose({
   get customProperty() {
     return 'property';
   },
@@ -31,7 +31,7 @@ let Es5ClassViaExtend = ElementBase.compose({
   },
   value: 'value'
 });
-document.registerElement('es5-class-via-extend', Es5ClassViaExtend);
+document.registerElement('es5-class', Es5Class);
 
 
 /* Element with camelCase property name */
@@ -52,10 +52,9 @@ class CreatedMixin {
     this.mixinCallbackInvoked = true;
   }
 }
-class ElementWithCreatedMixin extends ElementBase {
+class ElementWithCreatedMixin extends ElementBase.compose(CreatedMixin) {
   get template() {
     return "Hello";
   }
 }
-ElementWithCreatedMixin = ElementWithCreatedMixin.compose(CreatedMixin);
 document.registerElement('element-with-created-mixin', ElementWithCreatedMixin);

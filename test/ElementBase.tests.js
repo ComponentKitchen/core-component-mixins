@@ -14,8 +14,8 @@ suite("ElementBase", () => {
     assert.equal(element.shadowRoot.textContent.trim(), "Hello");
   });
 
-  test("can create component class with ES5-compatible .extend()", () => {
-    let element = document.createElement('es5-class-via-extend');
+  test("can create component class with ES5-compatible .compose()", () => {
+    let element = document.createElement('es5-class');
     assert.equal(element.customProperty, 'property');
     assert.equal(element.method(), 'method');
     assert.equal(element.value, 'value');
