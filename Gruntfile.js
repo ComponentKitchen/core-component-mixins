@@ -3,7 +3,6 @@ module.exports = function (grunt) {
   'use strict';
 
   grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Project configuration.
   grunt.initConfig({
@@ -29,25 +28,27 @@ module.exports = function (grunt) {
         files: {
           'build/tests.js': 'test/*.tests.js'
         }
-      }
-    },
-
-    watch: {
-      scripts: {
-        files: [
-          'demos/*.js',
-          'demos/**/*.js',
-          'extensible/*.js',
-          'src/*.js',
-          'test/*.js'
-        ],
-        tasks: ['build']
+      },
+      watch: {
+        files: {
+          'build/demos.js': ['demos/*.js', 'demos/**/*.js'],
+          'build/tests.js': 'test/*.tests.js'
+        },
+        options: {
+          keepAlive: true,
+          watch: true
+        }
       }
     }
 
   });
 
   grunt.registerTask('default', ['build']);
-  grunt.registerTask('build', ['browserify']);
+  grunt.registerTask('build', [
+    'browserify:dist',
+    'browserify:demos',
+    'browserify:test'
+  ]);
+  grunt.registerTask('watch', ['browserify:watch']);
 
 };
