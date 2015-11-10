@@ -3,7 +3,7 @@
  * X-Tag framework.
  */
 
-import Composable from '../../extensible/Composable';
+import Composable from 'Composable/src/Composable';
 import TemplateStamping from '../../src/TemplateStamping';
 import AttributeMarshalling from '../../src/AttributeMarshalling';
 import XTagExtensions from './XTagExtensions';

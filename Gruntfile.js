@@ -12,6 +12,7 @@ module.exports = function (grunt) {
         browserifyOptions: {
           debug: true
         },
+        ignore: false, // Don't ignore node_modules; i.e., process them too
         transform: ['babelify']
       },
       dist: {

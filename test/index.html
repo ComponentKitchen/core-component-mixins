@@ -5,14 +5,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <title>Test Suite - ElementBase</title>
-  <script src="../bower_components/web-component-tester/browser.js"></script>
-  <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
+
+  <script src="../node_modules/webcomponents.js/webcomponents.js"></script>
+  <link href="../node_modules/mocha/mocha.css">
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script>
+    mocha.setup('bdd');
+  </script>
+
+  <script src="../build/tests.js"></script>
 
 </head>
 
 <body>
-  <div id="container"></div>
-  <script src="../build/tests.js"></script>
+  <div id="mocha"></div>
+  <script>
+    mocha.checkLeaks();
+    mocha.run();
+  </script>
 </body>
 
 </html>
