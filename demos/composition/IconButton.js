@@ -2,7 +2,7 @@ import Composable from 'Composable/src/Composable';
 import SimpleButton from './SimpleButton';
 import { foldIntoBaseTemplate } from '../../src/TemplateComposition';
 
-export default class IconButton extends SimpleButton {
+export default class IconButton {
 
   get template() {
     return `
@@ -12,8 +12,10 @@ export default class IconButton extends SimpleButton {
   }
 
 }
-IconButton.prototype.decorate({
+Composable.decorate.call(IconButton.prototype, {
   template: Composable.rule(foldIntoBaseTemplate)
 });
+
+IconButton = SimpleButton.compose(IconButton);
 
 document.registerElement('icon-button', IconButton);
