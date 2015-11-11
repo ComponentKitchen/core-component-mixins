@@ -4,6 +4,7 @@ import { foldIntoBaseTemplate } from '../../src/TemplateComposition';
 
 export default class IconButton {
 
+  // @Composable.rule(foldIntoBaseTemplate)
   get template() {
     return `
        [Icon]
