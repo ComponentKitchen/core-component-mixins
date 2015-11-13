@@ -26,7 +26,7 @@ import * as CompositionRules from 'Composable/src/CompositionRules';
 //     </b>
 //   </template>
 //
-export function foldIntoBaseTemplate(target, key, descriptor) {
+export function foldIntoBaseSlots(target, key, descriptor) {
 
   let mixinGetter = descriptor.get;
   let mixinSetter = descriptor.set;

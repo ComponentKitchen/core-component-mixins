@@ -1,6 +1,6 @@
 import Composable from 'Composable/src/Composable';
 import SimpleButton from './SimpleButton';
-import { foldIntoBaseTemplate } from '../../src/TemplateComposition';
+import { foldIntoBaseSlots } from '../../src/TemplateComposition';
 
 class IconButton {
 
@@ -11,7 +11,7 @@ class IconButton {
     this.$.icon.src = value;
   }
 
-  // @Composable.rule(foldIntoBaseTemplate)
+  // @Composable.rule(foldIntoBaseSlots)
   get template() {
     return `
        <style>
@@ -28,7 +28,7 @@ class IconButton {
 
 }
 Composable.decorate.call(IconButton.prototype, {
-  template: Composable.rule(foldIntoBaseTemplate)
+  template: Composable.rule(foldIntoBaseSlots)
 });
 
 export default IconButton = SimpleButton.compose(IconButton);
