@@ -2,12 +2,26 @@ import Composable from 'Composable/src/Composable';
 import SimpleButton from './SimpleButton';
 import { foldIntoBaseTemplate } from '../../src/TemplateComposition';
 
-export default class IconButton {
+class IconButton {
+
+  get src() {
+    return this.$.icon.src;
+  }
+  set src(value) {
+    this.$.icon.src = value;
+  }
 
   // @Composable.rule(foldIntoBaseTemplate)
   get template() {
     return `
-       [Icon]
+       <style>
+       #icon {
+         height: 0.8em;
+         width: 0.8em;
+       }
+       </style>
+
+       <img id='icon' src='arrow.svg'>
        <slot></slot>
     `;
   }
@@ -17,6 +31,6 @@ Composable.decorate.call(IconButton.prototype, {
   template: Composable.rule(foldIntoBaseTemplate)
 });
 
-IconButton = SimpleButton.compose(IconButton);
+export default IconButton = SimpleButton.compose(IconButton);
 
 document.registerElement('icon-button', IconButton);
