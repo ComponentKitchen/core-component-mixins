@@ -27,53 +27,37 @@ import * as CompositionRules from 'Composable/src/CompositionRules';
 //   </template>
 //
 export function foldIntoBaseSlots(target, key, descriptor) {
-
   let mixinGetter = descriptor.get;
-  let mixinSetter = descriptor.set;
-  let base = Object.getPrototypeOf(target);
-  let baseDescriptor = CompositionRules.getPropertyDescriptor(base, key);
+  let baseDescriptor = CompositionRules.getBaseDescriptor(target, key);
   let baseGetter = baseDescriptor.get;
-  let baseSetter = baseDescriptor.set;
+  if (mixinGetter && baseGetter) {
 
-  descriptor.get = function() {
+    // Compose getters
+    descriptor.get = function() {
 
-    let mixinTemplate = makeTemplate(mixinGetter.call(this));
-    let baseTemplate = makeTemplate(baseGetter.call(this));
-    let mixinElement = mixinTemplate && mixinTemplate.content.cloneNode(true);
-    let baseElement = baseTemplate && baseTemplate.content.cloneNode(true);
+      let mixinTemplate = makeTemplate(mixinGetter.call(this));
+      let baseTemplate = makeTemplate(baseGetter.call(this));
+      let mixinElement = mixinTemplate && mixinTemplate.content.cloneNode(true);
+      let baseElement = baseTemplate && baseTemplate.content.cloneNode(true);
 
-    let folded = document.createElement('template');
+      let folded = document.createElement('template');
 
-    // Fold mixin template into first slot element in base template.
-    // TODO: Support named slots.
-    let slotNode = baseElement.querySelector('slot');
-    if (slotNode) {
-      slotNode.parentNode.replaceChild(mixinElement, slotNode);
-      folded.content.appendChild(baseElement);
-    } else {
-      // No place in base for mixin template -- throw mixin template away.
-      folded.content.appendChild(baseElement);
-    }
+      // Fold mixin template into first slot element in base template.
+      // TODO: Support named slots.
+      let slotNode = baseElement.querySelector('slot');
+      if (slotNode) {
+        slotNode.parentNode.replaceChild(mixinElement, slotNode);
+        folded.content.appendChild(baseElement);
+      } else {
+        // No place in base for mixin template -- throw mixin template away.
+        folded.content.appendChild(baseElement);
+      }
 
-    return folded;
-  };
-
-  // TODO: Refactor wrt CompositionRules.propagateProperty().
-  if (mixinGetter && !mixinSetter && baseSetter) {
-    // Need to supply default setter.
-    descriptor.set = function(value) {
-      baseSetter.call(this, value);
+      return folded;
     };
-  } else if (mixinSetter) {
-    if (!mixinGetter && baseGetter) {
-      // Need to supply default getter.
-      descriptor.get = function() {
-        return baseGetter.call(this);
-      };
-    }
-    // Compose setters.
-    descriptor.set = composeFunction(baseSetter, mixinSetter);
+    
   }
+  CompositionRules.completePropertyDefinition(descriptor, baseDescriptor);
 }
 
 
