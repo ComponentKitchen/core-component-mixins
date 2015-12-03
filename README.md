@@ -67,4 +67,4 @@ This codebase generally assumes that class creation (e.g., with ES6 `class`) is
 handled separately from custom element registration with
 `document.registerElement()`. That said, a framework can still decide to offer
 a single entry point that both defines a class and registers it. This is shown
-in the `xtag.register()` function of the [xtag](demos/X-Tag) example.
+in the `xtag.register()` function of the [X-Tag](demos/X-Tag) example.
