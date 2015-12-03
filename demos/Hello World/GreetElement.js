@@ -3,7 +3,7 @@
  * set of common custom element mixins.
  */
 
-import ElementBase from '../src/ElementBase';
+import ElementBase from '../../src/ElementBase';
 
 /* Define a custom element. */
 export default class GreetElement extends ElementBase {
