@@ -8,7 +8,7 @@
 import Composable from 'Composable/src/Composable';
 
 
-// We use Extensible to add its own members to a HTMLElement subclass.
+// We use Composable to add *itself* to a HTMLElement subclass.
 // The result is an HTMLElement with .compose() support.
 export default Composable.compose.call(
   HTMLElement,
