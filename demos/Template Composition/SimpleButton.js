@@ -14,6 +14,7 @@ export default class SimpleButton extends ElementBase {
         padding: 0.25em;
       }
       </style>
+      
       <button>
         <slot></slot>
       </button>
