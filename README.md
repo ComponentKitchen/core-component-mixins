@@ -50,7 +50,7 @@ for convenient access to elements within the shadow tree.
 
 A sample base class, [ElementBase](src/ElementBase.js), shows one way these
 mixins might be combined to create a custom element base class. Another example,
-[xtag](demos/X-Tag), shows a hypothetical application of this strategy to the
+[X-Tag](demos/X-Tag), shows a hypothetical application of this strategy to the
 X-Tag framework. The sample base class in that example uses a different set of
 mixins to demonstrate that that is possible.
 
@@ -64,7 +64,7 @@ More demos are available in the /demos folder.
 # Separating class construction from custom element registration
 
 This codebase generally assumes that class creation (e.g., with ES6 `class`) is
-handled separately from custom element registration (with
-`document.registerElement()`). That said, a framework can still decide to offer
+handled separately from custom element registration with
+`document.registerElement()`. That said, a framework can still decide to offer
 a single entry point that both defines a class and registers it. This is shown
 in the `xtag.register()` function of the [xtag](demos/X-Tag) example.

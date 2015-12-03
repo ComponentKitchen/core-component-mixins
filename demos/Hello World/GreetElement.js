@@ -5,6 +5,7 @@
 
 import ElementBase from '../../src/ElementBase';
 
+
 /* Define a custom element. */
 export default class GreetElement extends ElementBase {
 
@@ -29,4 +30,6 @@ export default class GreetElement extends ElementBase {
 
 }
 
+
+// Register the element. This could alternatively be handled by the importer.
 document.registerElement('greet-element', GreetElement);
