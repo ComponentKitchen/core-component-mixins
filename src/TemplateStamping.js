@@ -17,19 +17,23 @@ export default class TemplateStamping {
    */
   createdCallback() {
     let template = this.template;
-    if (typeof template === 'string') {
-      // Upgrade plain string to real template.
-      template = createTemplateWithInnerHTML(template);
-    }
-    if (template && USING_SHADOW_DOM_V0) {
-      polyfillSlotWithContent(template);
-    }
-    if (window.ShadowDOMPolyfill) {
-      shimTemplateStyles(template, this.localName);
-    }
     // TODO: Save the processed template with the component's class prototype
     // so it doesn't need to be processed with every instantiation.
     if (template) {
+
+      if (typeof template === 'string') {
+        // Upgrade plain string to real template.
+        template = createTemplateWithInnerHTML(template);
+      }
+
+      if (USING_SHADOW_DOM_V0) {
+        polyfillSlotWithContent(template);
+      }
+
+      if (window.ShadowDOMPolyfill) {
+        shimTemplateStyles(template, this.localName);
+      }
+
       // this.log("cloning template into shadow root");
       let root = USING_SHADOW_DOM_V0 ?
         this.createShadowRoot() :             // Shadow DOM v0
