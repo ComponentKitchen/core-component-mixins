@@ -11,4 +11,4 @@ base class puts its content inside a standard button. A subclass called
 composed into the base class template, with the result that an `IconButton`
 shows an icon inside of a standard button.
 
-[Live demo](http://componentkitchen.github.io/element-base/Template%20Composition/)
+[Live demo](http://componentkitchen.github.io/element-base/demos/Template%20Composition/)
