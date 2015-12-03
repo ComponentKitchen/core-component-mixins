@@ -32,6 +32,7 @@ module.exports = function (grunt) {
       },
       watch: {
         files: {
+          'dist/ElementBase.js': 'src/ElementBase.js',
           'build/demos.js': ['demos/*.js', 'demos/**/*.js'],
           'build/tests.js': 'test/*.tests.js'
         },

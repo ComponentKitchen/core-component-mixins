@@ -2,7 +2,7 @@
  * A component with a style element.
  */
 
-import ElementBase from '../src/ElementBase';
+import ElementBase from '../../src/ElementBase';
 
 /* Define a custom element. */
 export default class ElementWithStyle extends ElementBase {
