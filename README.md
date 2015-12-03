@@ -1,27 +1,33 @@
-This prototype explores some ideas for a
-common web component runtime along the lines discussed in this [document](https://docs.google.com/document/d/1DPClTHykvT-AiGxA5XnUSYJFc2uwBHcJh_Rk55IR_5s/edit#heading=h.oc8n7a9071o3).
+This prototype implements common web component features as mixins. It
+explores the idea that mixins can achieve the same results as a monolithic
+framework, while permitting more flexibility and a pay-as-you-go approach to
+complexity and performance.
 
-This prototype has these design goals:
+Design goals:
 
-1. The ability to compose component behavior with mixins is foundation on top of
-   which everything else can be built.
-2. Web component mixins should each focus on solving one specific, common task.
-   They should be well-factored. They should be able to be used on their own, or
-   in combination.
+1. Demonstrate that it's possible to create web components entirely from mixins.
+2. Have each web component mixins focus on solving a single, common task. They
+   should be well-factored. They should be able to be used on their own, or in
+   combination.
 3. Introduce as few new concepts as possible. Any developer who understands the
    DOM API should find this architecture appealing, without having to learn many
-   proprietary concepts (beyond mixins, above).
+   proprietary concepts (beyond mixins, see below).
 4. Focus on native browser support for ES6 and web components. The architecture
    should be useful in a production application today, but should also feel
    correct in a future world in which native ES6 and web components are
    everywhere.
 
+# Installation
 
-# Extensible classes with mixins
+    > npm install
+    > grunt build
 
-A foundation of this codebase is that web components can be expressed as
-compositions of base classes and mixins. A possible strategy for that is
-expressed in the [Extensible](extensible) class.
+# Composing classes with mixins
+
+A foundation of this prototype is that web components can be expressed as
+compositions of base classes and mixins. One possible architecture is
+expressed in the [Composable](https://github.com/ComponentKitchen/Composable)
+class, which is used by this project.
 
 If a common extension/mixin solution can be agreed upon, frameworks sharing that
 solution gain a certain degree of code sharing, interoperability, and can share
@@ -34,22 +40,25 @@ offer by virtue of which mixins they incorporate into their base classes.
 
 # Web component mixins
 
-Currently, the /src folder includes an initial set of very common web component
-mixins:
+The /src folder includes an initial set of mixins for very common web component
+features:
 
-1. Shadow DOM root creation.
-2. Template stamping.
-3. Marshalling attributes to properties.
+1. Template stamping into a Shadow DOM tree.
+2. Marshalling attributes to properties.
+3. Polymer-style [automatic node finding](https://www.polymer-project.org/1.0/docs/devguide/local-dom.html#node-finding)
+for convenient access to elements within the shadow tree.
 
 A sample base class, [ElementBase](src/ElementBase.js), shows one way these
 mixins might be combined to create a custom element base class. Another example,
-[xtag](demos/xtag), shows a hypothetical application of this strategy to the
+[xtag](demos/X-Tag), shows a hypothetical application of this strategy to the
 X-Tag framework. The sample base class in that example uses a different set of
 mixins to demonstrate that that is possible.
 
-A [demo](demos/index.html) shows this sample ElementBase class being used to
-create a simple [greet-element](demos/GreetElement.js) component. This can be
-viewed as a [live demo](http://componentkitchen.github.io/element-base/demos/index.html).
+A [Hello, world](demos/Hello%20World) demo shows this sample ElementBase class being used to
+create a simple [greet-element](demos/Hello%20World/GreetElement.js) component. This can be
+viewed as a [live demo](http://componentkitchen.github.io/element-base/demos/Hello%20World).
+
+More demos are available in the /demos folder.
 
 
 # Separating class construction from custom element registration
@@ -58,12 +67,4 @@ This codebase generally assumes that class creation (e.g., with ES6 `class`) is
 handled separately from custom element registration (with
 `document.registerElement()`). That said, a framework can still decide to offer
 a single entry point that both defines a class and registers it. This is shown
-in the `xtag.register()` function of the [xtag](demos/xtag) example.
-
-
-# Installing
-
-Ideally, only `npm install` should be required to install everything required
-to develop for this repo. However, this currently uses web-component-tester
-for unit testing, and that doesn't seem to install correctly via npm. For the
-time being, you must install web-component-tester via `bower install`.
+in the `xtag.register()` function of the [xtag](demos/X-Tag) example.
