@@ -11,4 +11,4 @@ exactly the same as what X-Tag currently supports, with the added benefit that
 the core component mixins involved are shared by other frameworks, and hence
 supported by a broader community.
 
-[Live demo](http://componentkitchen.github.io/element-base/demos/X-Tag/)
+[Live demo](http://componentkitchen.github.io/core-component-mixins/demos/X-Tag/)

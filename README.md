@@ -57,7 +57,7 @@ mixins to demonstrate that that is possible.
 
 A [Hello, world](demos/Hello%20World) demo shows this sample ElementBase class being used to
 create a simple [greet-element](demos/Hello%20World/GreetElement.js) component. This can be
-viewed as a [live demo](http://componentkitchen.github.io/element-base/demos/Hello%20World).
+viewed as a [live demo](http://componentkitchen.github.io/core-component-mixins/demos/Hello%20World).
 
 More demos are available in the /demos folder.
 
