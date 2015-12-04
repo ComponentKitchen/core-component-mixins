@@ -44,7 +44,8 @@ The /src folder includes an initial set of mixins for very common web component
 features:
 
 1. Template stamping into a Shadow DOM tree.
-2. Marshalling attributes to properties.
+2. Marshalling attributes to properties. This includes mapping hyphenated
+   `foo-bar` attribute references to camelCase `fooBar` property names.
 3. Polymer-style [automatic node finding](https://www.polymer-project.org/1.0/docs/devguide/local-dom.html#node-finding)
 for convenient access to elements within the shadow tree.
 
