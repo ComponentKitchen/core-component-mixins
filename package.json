@@ -1,8 +1,8 @@
 {
-  "name": "element-base",
-  "description": "Minimalist base class for custom elements",
+  "name": "core-component-mixins",
+  "description": "Core mixins for creating web components",
   "version": "0.0.0",
-  "repository": "https://github.com/JanMiksovsky/element-base",
+  "repository": "https://github.com/ComponentKitchen/core-component-mixins",
   "authors": [
     "Jan Miksovsky <jan@component.kitchen>"
   ],
