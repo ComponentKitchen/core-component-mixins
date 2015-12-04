@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+  <title>Hello, world (ES5)</title>
+
+  <script src="../../node_modules/webcomponents.js/webcomponents.js"></script>
+  <script src="../../dist/core-component-mixins.js"></script>
+
+  <template id="greet-element">
+    Hello,
+    <slot></slot><span id="punctuation">.</span>
+  </template>
+
+  <script>
+  /*
+   * This reproduces the "Hello, world" example in ES5.
+   * For comparison, see the original ES6 version.
+   */
+
+  /* Define a custom element. */
+  var GreetElement = ElementBase.compose({
+
+    // Define a "punctuation" attribute.
+    // If a user of this component sets the "punctuation" attribute in markup,
+    // the AttributeMarshalling mixin will cause this property to be set.
+    get punctuation() {
+      // Use this.$ reference created by the AutomaticNodeFinding mixin.
+      return this.$.punctuation.textContent;
+    },
+
+    set punctuation(value) {
+      this.$.punctuation.textContent = value;
+    },
+
+    // This template is picked up by the TemplateStamping mixin.
+    get template() {
+      return document.querySelector('#greet-element');
+    }
+
+  });
+
+  // Register the element.
+  document.registerElement('greet-element', GreetElement);
+  </script>
+
+</head>
+
+<body>
+  <greet-element>world</greet-element>
+  <greet-element punctuation="!">web components</greet-element>
+</body>
+
+</html>

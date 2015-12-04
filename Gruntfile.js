@@ -17,7 +17,7 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          'dist/ElementBase.js': 'src/ElementBase.js'
+          'dist/core-component-mixins.js': 'src/es5globals.js'
         }
       },
       demos: {
@@ -32,7 +32,7 @@ module.exports = function (grunt) {
       },
       watch: {
         files: {
-          'dist/ElementBase.js': 'src/ElementBase.js',
+          'dist/core-component-mixins.js': 'src/es5globals.js',
           'build/demos.js': ['demos/*.js', 'demos/**/*.js'],
           'build/tests.js': 'test/*.tests.js'
         },
