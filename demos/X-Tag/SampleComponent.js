@@ -1,7 +1,7 @@
 /*
  * Demonstrate the use of a hypothetical XTag registration function.
  *
- * Note that this syntax tried to comply with the existing X-Tag syntax as much
+ * Note that this syntax tries to comply with the existing X-Tag syntax as much
  * as possible.
  */
 
