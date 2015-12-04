@@ -1,5 +1,5 @@
 This demo shows the use of a mixin that allows *template composition* between
-a subclass and a base class. An open question is web component development is
+a subclass and a base class. An open question in web component development is:
 what's the best way for a component to fill slots defined by a base class?
 For a longer discussion of this question, see this
 [blog post](http://blog.quickui.org/2013/06/11/puzzle-define-html-custom-element-subclasses-that-can-fill-in-base-class-insertion-points/).
