@@ -9,8 +9,5 @@
 import Composable from './Composable';
 
 
-// We use Composable to add *itself* to a HTMLElement subclass.
-// The result is an HTMLElement with .compose() support.
-let ComposableElement = Composable(HTMLElement);
-
-export default ComposableElement;
+// Extend HTMLElement to create an HTMLElement with .compose() support.
+export default Composable(HTMLElement);

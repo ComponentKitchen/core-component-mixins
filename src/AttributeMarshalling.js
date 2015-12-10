@@ -2,7 +2,7 @@
  * Marshall attributes to properties (and eventually vice versa).
  */
 
-let AttributeMarshalling = (base) => class AttributeMarshalling extends base {
+export default (base) => class AttributeMarshalling extends base {
 
   /*
    * Handle a change to the attribute with the given name.
@@ -38,6 +38,3 @@ function propertyToAttributeName(propertyName) {
   let attributeName = propertyName.replace(/([a-z][A-Z])/g, g => g[0] + '-' + g[1].toLowerCase());
   return attributeName;
 }
-
-
-export default AttributeMarshalling;

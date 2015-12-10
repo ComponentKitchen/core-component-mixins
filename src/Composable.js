@@ -1,4 +1,4 @@
-let Composable = (base) => class Composable extends base {
+export default (base) => class Composable extends base {
 
   static compose(fn, ...rest) {
     let result = fn(this);
@@ -6,8 +6,5 @@ let Composable = (base) => class Composable extends base {
       Composable.compose.call(result, ...rest) :
       result;
   }
-  
+
 };
-
-
-export default Composable;

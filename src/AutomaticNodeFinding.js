@@ -3,7 +3,7 @@
  * See https://www.polymer-project.org/1.0/docs/devguide/local-dom.html#node-finding.
  */
 
-let AutomaticNodeFinding = (base) => class AutomaticNodeFinding extends base {
+export default (base) => class AutomaticNodeFinding extends base {
 
   createdCallback() {
     if (super.createdCallback) { super.createdCallback(); }
@@ -18,6 +18,3 @@ let AutomaticNodeFinding = (base) => class AutomaticNodeFinding extends base {
   }
 
 };
-
-
-export default AutomaticNodeFinding;

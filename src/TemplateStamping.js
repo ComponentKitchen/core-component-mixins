@@ -9,7 +9,7 @@
  */
 
 
-let TemplateStamping = (base) => class TemplateStamping extends base {
+export default (base) => class TemplateStamping extends base {
 
   /*
    * If the component defines a template, a shadow root will be created on the
@@ -78,6 +78,3 @@ function polyfillSlotWithContent(template) {
 function shimTemplateStyles(template, tag) {
   WebComponents.ShadowCSS.shimStyling(template.content, tag);
 }
-
-
-export default TemplateStamping;
