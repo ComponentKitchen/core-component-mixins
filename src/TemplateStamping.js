@@ -9,13 +9,14 @@
  */
 
 
-export default class TemplateStamping {
+let TemplateStamping = (base) => class TemplateStamping extends base {
 
   /*
    * If the component defines a template, a shadow root will be created on the
    * component instance, and the template stamped into it.
    */
   createdCallback() {
+    if (super.createdCallback) { super.createdCallback(); }
     let template = this.template;
     // TODO: Save the processed template with the component's class prototype
     // so it doesn't need to be processed with every instantiation.
@@ -43,7 +44,7 @@ export default class TemplateStamping {
     }
   }
 
-}
+};
 
 
 // Feature detection for old Shadow DOM v0.
@@ -77,3 +78,6 @@ function polyfillSlotWithContent(template) {
 function shimTemplateStyles(template, tag) {
   WebComponents.ShadowCSS.shimStyling(template.content, tag);
 }
+
+
+export default TemplateStamping;

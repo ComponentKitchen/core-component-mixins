@@ -2,12 +2,13 @@
  * Marshall attributes to properties (and eventually vice versa).
  */
 
-export default class AttributeMarshalling {
+let AttributeMarshalling = (base) => class AttributeMarshalling extends base {
 
   /*
    * Handle a change to the attribute with the given name.
    */
   attributeChangedCallback(name, oldValue, newValue) {
+    if (super.attributeChangedCallback) { super.attributeChangedCallback(); }
     // If the attribute name corresponds to a property name, then set that
     // property. Ignore changes in standard HTMLElement properties.
     let propertyName = attributeToPropertyName(name);
@@ -17,12 +18,13 @@ export default class AttributeMarshalling {
   }
 
   createdCallback() {
+    if (super.createdCallback) { super.createdCallback(); }
     [].forEach.call(this.attributes, attribute => {
       this.attributeChangedCallback(attribute.name, undefined, attribute.value);
     });
   }
 
-}
+};
 
 
 // Convert camel case fooBar name to hyphenated foo-bar.
@@ -36,3 +38,6 @@ function propertyToAttributeName(propertyName) {
   let attributeName = propertyName.replace(/([a-z][A-Z])/g, g => g[0] + '-' + g[1].toLowerCase());
   return attributeName;
 }
+
+
+export default AttributeMarshalling;

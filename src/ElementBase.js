@@ -11,17 +11,23 @@ import AutomaticNodeFinding from './AutomaticNodeFinding';
 import AttributeMarshalling from './AttributeMarshalling';
 
 
-export default class ElementBase extends ComposableElement.compose(
+let ElementBase = ComposableElement.compose(
   TemplateStamping,     // before node finding, so shadow root is populated
   AutomaticNodeFinding, // before marshalling, so marshalled properties can use it
   AttributeMarshalling
-) {
+);
 
-  /*
-   * Debugging utility: logs a message, prefixed by the component's tag.
-   */
-  log(text) {
-    console.log(`${this.localName}: ${text}`);
-  }
+// let ElementBase = AttributeMarshalling(AutomaticNodeFinding(TemplateStamping(HTMLElement)));
 
-}
+// {
+//
+//   /*
+//    * Debugging utility: logs a message, prefixed by the component's tag.
+//    */
+//   log(text) {
+//     console.log(`${this.localName}: ${text}`);
+//   }
+//
+// }
+
+export default ElementBase;
