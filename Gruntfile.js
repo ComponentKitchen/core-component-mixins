@@ -33,8 +33,7 @@ module.exports = function (grunt) {
       watch: {
         files: {
           'dist/core-component-mixins.js': 'src/es5globals.js',
-          // 'build/demos.js': ['demos/*.js', 'demos/**/*.js'],
-          'build/demos.js': ['demos/Hello World/*.js'],
+          'build/demos.js': ['demos/*.js', 'demos/**/*.js'],
           'build/tests.js': 'test/*.tests.js'
         },
         options: {

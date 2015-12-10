@@ -3,13 +3,14 @@
  *
  */
 
-export default class XTagExtensions {
+export default (base) => class XTagExtensions extends base {
 
   /*
    * Demonstrate a very basic XTag-style system for defining event handlers in
    * a JavaScript dictionary called "events" that maps event names to handlers.
    */
   createdCallback() {
+    if (super.createdCallback) { super.createdCallback(); }
     let events = this.events || [];
     for (let name in events) {
       this.addEventListener(name, events[name]);
@@ -26,4 +27,4 @@ export default class XTagExtensions {
     this.content = value;
   }
 
-}
+};

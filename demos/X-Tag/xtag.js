@@ -3,7 +3,8 @@
  * X-Tag framework.
  */
 
-import Composable from 'Composable/src/Composable';
+// import Composable from 'Composable/src/Composable';
+import Composable from '../../src/Composable';
 import TemplateStamping from '../../src/TemplateStamping';
 import AttributeMarshalling from '../../src/AttributeMarshalling';
 import XTagExtensions from './XTagExtensions';
@@ -18,9 +19,7 @@ import XTagExtensions from './XTagExtensions';
  * for some XTag-style features. By design, this omits automatic node finding,
  * just to show that it's possible to leave out extensions if that's desired.
  */
-export let Element = Composable.compose.call(
-  HTMLElement,            // the base functionality
-  Composable,             // add extensibility
+export let Element = Composable(HTMLElement).compose(
   TemplateStamping,       // add shadow root creation and template support
   AttributeMarshalling,   // add marshaling of attributes to properties
   XTagExtensions          // add some X-Tag specific features like "events"
@@ -32,7 +31,9 @@ export let Element = Composable.compose.call(
  */
 export function register(tag, prototype) {
   let mixins = prototype.mixins || []; // Support a declarative "mixins" key.
-  let Subclass = Element.compose(prototype, ...mixins);
+  class Subclass extends Element.compose(...mixins) {}
+  // HACK: Use Object.assign until we can use Composable for this again.
+  Object.assign(Subclass.prototype, prototype);
   document.registerElement(tag, Subclass);
   return Subclass;
 }
