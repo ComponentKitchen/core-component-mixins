@@ -5,13 +5,13 @@
  */
 
 
-import ComposableElement from './ComposableElement';
+import Composable from './Composable';
 import TemplateStamping from './TemplateStamping';
 import AutomaticNodeFinding from './AutomaticNodeFinding';
 import AttributeMarshalling from './AttributeMarshalling';
 
 
-export default class ElementBase extends ComposableElement.compose(
+export default class ElementBase extends Composable(HTMLElement).compose(
   TemplateStamping,     // before node finding, so shadow root is populated
   AutomaticNodeFinding, // before marshalling, so marshalled properties can use it
   AttributeMarshalling

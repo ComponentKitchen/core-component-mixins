@@ -10,9 +10,8 @@ import AttributeMarshalling from '../../src/AttributeMarshalling';
 import XTagExtensions from './XTagExtensions';
 
 /*
- * A framework base class can start with HTMLElement, add in extensibility,
- * plus any other features it wants to bake in. (Alternatively, it could start
- * a common extensible HTML element class like src/ComposableElement.js.)
+ * A framework base class can start with HTMLElement, add in composability,
+ * plus any other features it wants to bake in.
  *
   * Here, the hypothetical framework uses two standard extension classes
  * for template stamping and attribute marshalling, and adds a custom extension
