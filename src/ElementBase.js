@@ -21,6 +21,7 @@ export default class ElementBase extends ComposableElement.compose(
    * Debugging utility: logs a message, prefixed by the component's tag.
    */
   log(text) {
+    if (super.log) { super.log(text); }
     console.log(`${this.localName}: ${text}`);
   }
 
