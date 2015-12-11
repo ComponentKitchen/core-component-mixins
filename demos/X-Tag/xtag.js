@@ -31,9 +31,7 @@ export let Element = Composable(HTMLElement).compose(
  */
 export function register(tag, prototype) {
   let mixins = prototype.mixins || []; // Support a declarative "mixins" key.
-  class Subclass extends Element.compose(...mixins) {}
-  // HACK: Use Object.assign until we can use Composable for this again.
-  Object.assign(Subclass.prototype, prototype);
+  let Subclass = Element.compose(prototype, ...mixins);
   document.registerElement(tag, Subclass);
   return Subclass;
 }

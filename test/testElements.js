@@ -47,11 +47,12 @@ document.registerElement('element-with-camel-case-property', ElementWithCamelCas
 
 
 /* Mixin that defines a createdCallback method. */
-class CreatedMixin {
+let CreatedMixin = (base) => class CreatedMixin extends base {
   createdCallback() {
+    if (super.createdCallback) { super.createdCallback(); }
     this.mixinCallbackInvoked = true;
   }
-}
+};
 class ElementWithCreatedMixin extends ElementBase.compose(CreatedMixin) {
   get template() {
     return "Hello";
