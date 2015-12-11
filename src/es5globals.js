@@ -13,8 +13,6 @@ window.AutomaticNodeFinding = AutomaticNodeFinding;
 window.TemplateStamping = TemplateStamping;
 
 // Standard base classes
-import ComposableElement from './ComposableElement';
 import ElementBase from './ElementBase';
 
-window.ComposableElement = ComposableElement;
 window.ElementBase = ElementBase;
