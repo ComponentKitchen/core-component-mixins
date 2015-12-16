@@ -113,7 +113,7 @@ the property, the result will be undefined anyway.
     };
 
 
-# Property with both getter and setter
+## Property with both getter and setter
 
 This is a combination of the above two rules. The getter will generally want to
 override the base class property, so it doesn’t need to invoke super. The setter
