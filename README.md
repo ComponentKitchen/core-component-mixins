@@ -37,8 +37,8 @@ Such mixins should generally ensure that base class properties and methods are
 not broken by the mixin. In particular, if a mixin wants to add a new property
 or method, it should take care to also invoke the base class' property or
 method. To do that consistently, mixin functions should follow standardized
-[Composition Rules]. See that document if you are interested in creating your
-own mixins.
+[Composition Rules](Composition Rules.md). See that document if you are
+interested in creating your own mixins.
 
 A virtue of a functional mixin is that you do not need to use any library to
 apply it. This increases the chance that mixins can be shared across projects.
