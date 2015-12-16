@@ -25,10 +25,23 @@ Design goals:
 # Composing classes with mixins
 
 A foundation of this prototype is that web components can be expressed as
-compositions of base classes and mixins. One possible architecture is
-expressed in the [Composable](https://github.com/ComponentKitchen/Composable)
-class, which is used by this project.
+compositions of base classes and mixins. This prototype defines a mixin as a
+function that takes a base class, and returns a subclass defining the new
+features.
 
+    let MyMixin = (base) => class MyMixin extends base {
+      // Mixin defines properties and methods here.
+    };
+
+Such mixins should generally ensure that base class properties and methods are
+not broken by the mixin. In particular, if a mixin wants to add a new property
+or method, it should take care to also invoke the base class' property or
+method. To do that consistently, mixin functions should follow standardized
+[Composition Rules]. See that document if you are interested in creating your
+own mixins.
+
+A virtue of a functional mixin is that you do not need to use any library to
+apply it. This increases the chance that mixins can be shared across projects.
 If a common extension/mixin solution can be agreed upon, frameworks sharing that
 solution gain a certain degree of code sharing, interoperability, and can share
 conceptual materials. This reduces the learning curve for dealing with any one
