@@ -51,22 +51,58 @@ Frameworks can still make their own decisions about which features they want to
 offer by virtue of which mixins they incorporate into their base classes.
 
 
+# Applying multiple mixins
+
+Since web components often include many mixins, a helper mixin called Composable
+provides syntactic sugar that allows multiple mixins to be applied in a single
+call. Instead of defining an element like:
+
+    class MyElement extends Mixin1(Mixin2(Mixin3(Mixin4(HTMLElement)))) {
+      ...
+    }
+
+You can write:
+
+    class MyElement extends Composable(HTMLElement).compose(
+      Mixin1,
+      Mixin2,
+      Mixin3,
+      Mixin4
+    ) {
+      ...
+    }
+
+
 # Web component mixins
 
 The /src folder includes an initial set of mixins for very common web component
 features:
 
 1. Template stamping into a Shadow DOM tree.
-2. Marshalling attributes to properties. This includes mapping hyphenated
+2. Polymer-style [automatic node finding](https://www.polymer-project.org/1.0/docs/devguide/local-dom.html#node-finding)
+   for convenient access to elements within the shadow tree.
+3. Marshalling attributes to properties. This includes mapping hyphenated
    `foo-bar` attribute references to camelCase `fooBar` property names.
-3. Polymer-style [automatic node finding](https://www.polymer-project.org/1.0/docs/devguide/local-dom.html#node-finding)
-for convenient access to elements within the shadow tree.
+
+
+# Element base classes
 
 A sample base class, [ElementBase](src/ElementBase.js), shows one way these
-mixins might be combined to create a custom element base class. Another example,
-[X-Tag](demos/X-Tag), shows a hypothetical application of this strategy to the
-X-Tag framework. The sample base class in that example uses a different set of
-mixins to demonstrate that that is possible.
+mixins might be combined to create a custom element base class. This base class
+is not special in any way. It is essentially just a pre-packaged application
+of the mixins described above:
+
+    class ElementBase extends Composable(HTMLElement).compose(
+      TemplateStamping,
+      AutomaticNodeFinding,
+      AttributeMarshalling
+    ) {
+      ...
+    }
+
+Another example, [X-Tag](demos/X-Tag), shows a hypothetical application of this
+strategy to the X-Tag framework. The sample base class in that example uses a
+different set of mixins to demonstrate that that is possible.
 
 A [Hello, world](demos/Hello%20World) demo shows this sample ElementBase class being used to
 create a simple [greet-element](demos/Hello%20World/GreetElement.js) component. This can be
