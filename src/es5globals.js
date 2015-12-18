@@ -8,7 +8,7 @@ import AttributeMarshalling from './AttributeMarshalling';
 import AutomaticNodeFinding from './AutomaticNodeFinding';
 import TemplateStamping from './TemplateStamping';
 
-window.AutomaticNodeFinding = AutomaticNodeFinding;
+window.AttributeMarshalling = AttributeMarshalling;
 window.AutomaticNodeFinding = AutomaticNodeFinding;
 window.TemplateStamping = TemplateStamping;
 
